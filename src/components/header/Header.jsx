@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./Header.css";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Header = ({ headerName, setSearch, onClick }) => {
   const [isSearchVisible, setIsSearchVisible] = useState(false); // Track visibility of search input
+  const toggleButtonRef = useRef(null); // Ref for the toggle button
   const navigate = useNavigate();
 
   const handleSearchChange = (event) => {
@@ -12,6 +13,18 @@ const Header = ({ headerName, setSearch, onClick }) => {
 
   const toggleSearch = () => {
     setIsSearchVisible((prev) => !prev); // Toggle visibility
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      // Simulate a button click or toggle the search visibility when Enter is pressed
+      toggleSearch();
+
+      if (toggleButtonRef.current) {
+        toggleButtonRef.current.click(); // Trigger the button click programmatically
+      }
+    }
   };
 
   return (
@@ -27,6 +40,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
           BillZo
         </NavLink>
         <button
+         ref={toggleButtonRef}
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -107,6 +121,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
               placeholder="Search products..."
               aria-label="Search"
               onChange={handleSearchChange}
+              onKeyDown={handleKeyDown} 
             />
             {/* <button className="btn btn-outline-success" type="submit">Search</button> */}
             {/* <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/> */}
