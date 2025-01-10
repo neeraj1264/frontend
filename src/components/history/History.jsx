@@ -35,6 +35,10 @@ const handleRemoveOrder = async (orderId) => {
     const updatedOrders = orders.filter((order) => order.id !== orderId);
     setOrders(updatedOrders);
 
+    setFilteredOrders((prevFilteredOrders) =>
+      prevFilteredOrders.filter((order) => order.id !== orderId)
+    );
+    
     console.log('Order removed successfully from both MongoDB and state');
   } catch (error) {
     console.error('Error removing order:', error.message);
