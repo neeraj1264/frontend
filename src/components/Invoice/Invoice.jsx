@@ -51,7 +51,6 @@ const Invoice = () => {
     // Clear the timeout if the user releases the press before 1 second
     clearTimeout(pressTimer);
   };
-  console.log("selected products is:-" ,selectedProducts);
 
   const filteredProducts = selectedProducts
     .filter((product) =>

@@ -39,6 +39,18 @@ const Header = ({ headerName, setSearch, onClick }) => {
         >
           BillZo
         </NavLink>
+        <form className="search" role="search">
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Search products..."
+              aria-label="Search"
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown} 
+            />
+            {/* <button className="btn btn-outline-success" type="submit">Search</button> */}
+            {/* <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/> */}
+          </form>
         <button
          ref={toggleButtonRef}
           className="navbar-toggler"
