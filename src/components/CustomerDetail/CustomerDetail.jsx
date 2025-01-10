@@ -45,7 +45,9 @@ const CustomerDetail = () => {
   }, []);
 
   const handleSendToWhatsApp = () => {
-    // Calculate the current total amount from productsToSend
+
+    const restaurantName = "Urban Pizzeria"; 
+
     const currentTotalAmount =
       calculateTotalPrice(productsToSend) + deliveryChargeAmount;
 
@@ -69,6 +71,7 @@ const CustomerDetail = () => {
 
     // Construct the WhatsApp message
     const message = encodeURIComponent(
+      `*🍔🍟🍕 ${restaurantName} 🍕🍟🍔*\n\n` +
       `Order: *${orderId}*` +
         (customerPhone ? `\nPhone: *${customerPhone}*` : "") +
         (customerName ? `\nName: *${customerName}*` : "") +

@@ -402,20 +402,6 @@ const Invoice = () => {
                       <hr />
                       <div>
                         <div key={idx} className="main-box">
-                          {/* <div className="img-box">
-                          {product.image ? (
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              style={{ width: "3rem", height: "3rem" }}
-                            />
-                          ) : (
-                            <FaImage
-                              style={{ width: "3rem", height: "3rem" }}
-                            />
-                          )}
-                        </div> */}
-
                           <div
                             className="sub-box"
                             onMouseDown={handlePressStart}

@@ -108,3 +108,18 @@ export const fetchcustomerdata = async () => {
     throw error; // Rethrow for further handling
   }
 };
+
+export const removeOrder = async (orderId) => {
+  const response = await fetch(`${BASE_URL}/orders/${orderId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to remove order from database');
+  }
+
+  return response.json(); // Return the API response
+};

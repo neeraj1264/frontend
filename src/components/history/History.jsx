@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./History.css";
 import { FaArrowLeft , FaWhatsapp} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { fetchOrders } from "../../api";
+import { fetchOrders, removeOrder } from "../../api";
 import Header from "../header/Header";
 
 const History = () => {
@@ -12,7 +12,34 @@ const History = () => {
   const [filter, setFilter] = useState("Today");
   const [expandedOrderId, setExpandedOrderId] = useState(null); // Track expanded order
   const [loading, setLoading] = useState(false); // Loading state
+  const [showRemoveBtn, setShowRemoveBtn] = useState(false);
   const navigate = useNavigate();
+
+  // Show remove button on long press
+let pressTimer;
+const handlePressStart = () => {
+  pressTimer = setTimeout(() => {
+    setShowRemoveBtn(true);
+  }, 1000);
+};
+const handlePressEnd = () => {
+  clearTimeout(pressTimer);
+};
+
+const handleRemoveOrder = async (orderId) => {
+  try {
+    // Call the API function
+    await removeOrder(orderId);
+
+    // Remove the order from the state
+    const updatedOrders = orders.filter((order) => order.id !== orderId);
+    setOrders(updatedOrders);
+
+    console.log('Order removed successfully from both MongoDB and state');
+  } catch (error) {
+    console.error('Error removing order:', error.message);
+  }
+};
 
  useEffect(() => {
   const getOrders = async () => {
@@ -169,7 +196,12 @@ const History = () => {
 
         {filteredOrders.length > 0 ? (
           [...filteredOrders].reverse().map((order, index) => (
-            <div key={order.id} className="order-section">
+            <div key={order.id} className="order-section"
+            onMouseDown={handlePressStart}
+            onMouseUp={handlePressEnd}
+            onTouchStart={handlePressStart}
+            onTouchEnd={handlePressEnd}
+            >
               <hr />
               <div onClick={() => toggleOrder(order.id)}>
               <h2
@@ -183,6 +215,14 @@ const History = () => {
                 {order.phone && (
     <FaWhatsapp className="whatsapp" onClick={() => handleWhatsappClick(order)} />
   )}              </p>
+   {showRemoveBtn && (
+            <button
+              className="remove-btn"
+              onClick={() => handleRemoveOrder(order.id)}
+            >
+              Remove Order
+            </button>
+          )}
               </div>
              
               {expandedOrderId === order.id && ( // Render table only if this order is expanded
