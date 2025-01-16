@@ -333,7 +333,7 @@ const CustomerDetail = () => {
         const productSize = product.size ? `(${product.size})` : "";
   
         // Break the product name into multiple lines if it exceeds the fixed width
-        const nameLines = breakProductName(product.name, nameWidth);
+        const nameLines = breakProductName(product.name + " " + productSize, nameWidth);
   
         // Format the price and quantity with proper padding
         const paddedPrice = `₹${product.price}`.padStart(priceWidth, " "); // Pad price to the left
@@ -362,9 +362,9 @@ const CustomerDetail = () => {
     const detailedItems = `\n${productDetails}`;
   
     const invoiceText = `
-     \x1B\x21\x30 Foodies Hub \x1B\x21\x00
-  \x1B\x61\x01    Pehowa, Haryana, 136128\x1B\x61\x00
-  \x1B\x61\x01    Phone: +91 70158-23645\x1B\x61\x00
+  \x1B\x21\x30 Foodies Hub \x1B\x21\x00
+  \x1B\x61\x01  Pehowa, Haryana, 136128\x1B\x61\x00
+  \x1B\x61\x01  Phone: +91 70158-23645\x1B\x61\x00
 
   \x1B\x21\x10-----Invoice Details-----\x1B\x21\x00
   
@@ -389,7 +389,6 @@ const CustomerDetail = () => {
   
   \x1B\x21\x10     -----Items-----     \x1B\x21\x00 
   ${detailedItems}
-  
   ${
       hasDeliveryCharge
         ? `Item Total: ₹${calculateTotalPrice(productsToSend).toFixed(2)}`
@@ -398,12 +397,11 @@ const CustomerDetail = () => {
   ${
       hasDeliveryCharge ? `Service Charge: ₹${getdeliverycharge.toFixed(2)}` : " "
     }
-  
   \x1B\x21\x30 Total: ₹${
       calculateTotalPrice(productsToSend) + getdeliverycharge
     }\x1B\x21\x00
-     Thank You Visit Again!
-  
+
+    Thank You Visit Again!
   ---------------------------
   
        Powered by BillZo
