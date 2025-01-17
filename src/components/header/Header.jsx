@@ -126,6 +126,18 @@ const Header = ({ headerName, setSearch, onClick }) => {
                 Customer Detail
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                className={({ isActive }) =>
+                  isActive
+                    ? "nav-link custom-text active"
+                    : "nav-link custom-text"
+                }
+                to="/advance"
+              >
+                Setting
+              </NavLink>
+            </li>
           </ul>
           <form className="d-flex" role="search">
             <input

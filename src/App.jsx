@@ -8,9 +8,15 @@ import NewProduct from "./components/ProductAdded/NewProduct";
 import History from "./components/history/History";
 import { CustomerData } from "./components/data/CustomerData";
 import AddToHomeModal from "./components/AddToHome/AddToHome";
+import Advance from "./components/advance/Advance";
 
 
 const App = () => {
+
+  const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPasswordPopup, setShowPasswordPopup] = useState(true);
+
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [installPrompt, setInstallPrompt] = useState(null);
 
@@ -18,6 +24,13 @@ const App = () => {
 
    // Clear 'productsToSend' from localStorage on page reload
    useEffect(() => {
+
+    const storedPasswordStatus = localStorage.getItem("passwordCorrect");
+    if (storedPasswordStatus === "true") {
+      setIsPasswordCorrect(true);
+      setShowPasswordPopup(false); // Hide password popup if already logged in
+    }
+
     const handleBeforeUnload = () => {
       localStorage.removeItem("productsToSend");
     };
@@ -30,6 +43,22 @@ const App = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    // Check if the entered password is correct
+    if (password === "0000") {
+      localStorage.setItem("passwordCorrect", "true"); // Store password status in localStorage
+      setIsPasswordCorrect(true);
+      setShowPasswordPopup(false); // Close the password popup
+    } else {
+      alert("Incorrect password. Please try again.");
+    }
+  };
+
   const handleInstallClick = () => {
     if (installPrompt instanceof Event) {
       const installEvent = installPrompt;
@@ -73,6 +102,21 @@ const App = () => {
 
   return (
     <>
+     {showPasswordPopup && !isPasswordCorrect && (
+        <div className="password-popup">
+          <div className="password-content">
+            <h3>Enter Password</h3>
+            <input
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Enter password"
+            />
+            <button onClick={handleSubmit}>Submit</button>
+          </div>
+        </div>
+      )}
+       {isPasswordCorrect && (
     <Router>
       <Routes>
       <Route path="/" element={<Navigate to="/invoice" />} />
@@ -88,10 +132,11 @@ const App = () => {
         <Route path="/customer-detail" element={<CustomerDetail />} />
         <Route path="/customer-data" element={<CustomerData />} />
         <Route path="/history" element={<History />} />
-
+        <Route path="/advance" element={<Advance />} />
 
       </Routes>
     </Router>
+       )}
       {installPrompt && currentRoute === '/invoice' && (
         <AddToHomeModal
         installPrompt={installPrompt}
