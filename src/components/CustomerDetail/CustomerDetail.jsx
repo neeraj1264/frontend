@@ -399,7 +399,7 @@ const CustomerDetail = () => {
     }
   \x1B\x21\x30 Total: ₹${
       calculateTotalPrice(productsToSend) + getdeliverycharge
-    }\x1B\x21\x00
+    }/-\x1B\x21\x00
 
     Thank You Visit Again!
   ---------------------------
