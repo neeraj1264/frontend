@@ -515,7 +515,7 @@ const Invoice = () => {
       </div>
       {showPopup && currentProduct && currentProduct.varieties?.length > 0 && (
         <div className="popup-overlay">
-          <div className="popup-content">
+          <div className="popup-contentt">
             <FaTimesCircle
               className="close-icon"
               onClick={() => setShowPopup(false)}
