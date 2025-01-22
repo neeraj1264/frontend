@@ -46,7 +46,14 @@ const Advance = ({ orders, setOrders }) => {
 
   // Handle Advanced Checkbox Click
   const handleAdvancedCheckboxClick = () => {
-    if (!advancedCheckboxState) {
+    if (advancedCheckboxState) {
+      // Uncheck logic
+      setAdvancedCheckboxState(false);
+      setIsAdvancedAccessGranted(false);
+      localStorage.removeItem("advancedFeature");
+      alert("Access removed!");
+    } else {
+      // Check logic
       setShowPasswordPopup(true); // Show password popup
     }
   };
@@ -68,8 +75,7 @@ const Advance = ({ orders, setOrders }) => {
             <input
               type="checkbox"
               checked={advancedCheckboxState}
-              onChange={() => {}} // Prevent default behavior
-              onClick={handleAdvancedCheckboxClick} // Show popup if unchecked
+              onChange={handleAdvancedCheckboxClick} // Manage state directly here
             />
             <h4>Access Advanced Features</h4>
           </label>
