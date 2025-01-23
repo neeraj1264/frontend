@@ -311,9 +311,9 @@ const CustomerDetail = () => {
     const hasDeliveryCharge = getdeliverycharge !== 0; // Check if delivery charge exists
   
     const orderWidth = 2;
-    const nameWidth = 15; // Set a fixed width for product name
-    const priceWidth = 5; // Set a fixed width for price
-    const quantityWidth = 4; // Set a fixed width for quantity
+    const nameWidth = 16; // Set a fixed width for product name
+    const priceWidth = 4; // Set a fixed width for price
+    const quantityWidth = 2; // Set a fixed width for quantity
   
     // Helper function to break a product name into multiple lines if needed
     const breakProductName = (name, maxLength) => {
@@ -336,14 +336,14 @@ const CustomerDetail = () => {
         const nameLines = breakProductName(product.name + " " + productSize, nameWidth);
   
         // Format the price and quantity with proper padding
-        const paddedPrice = `₹${product.price}`.padStart(priceWidth, " "); // Pad price to the left
+        const paddedPrice = `${product.price}`.padStart(priceWidth, " "); // Pad price to the left
         const paddedQuantity = `${product.quantity}`.padStart(quantityWidth, " "); // Pad quantity to the left
   
         // Combine name lines with the proper padding for price and quantity
         const productText = nameLines
           .map((line, index) => {
             if (index === 0) {
-              return `${orderNumber} ${line.padEnd(nameWidth, " ")} ${paddedQuantity} x ${paddedPrice} `;
+              return `${orderNumber}. ${line.padEnd(nameWidth, " ")} ${paddedQuantity} x ${paddedPrice} `;
             } else {
               return `    ${line.padEnd(nameWidth, " ")} ${"".padEnd(priceWidth, " ")} ${"".padEnd(quantityWidth, " ")} `;
             }
@@ -355,11 +355,13 @@ const CustomerDetail = () => {
       .join("\n");
   
     // Add a border for the header
-    const header = ` ${"Item Name".padEnd(nameWidth, " ")} ${"Rate".padStart(priceWidth, " ")} ${"Qty".padStart(quantityWidth, " ")}`;
+    const header = ` No    Item Name     Qty  price `;
     const separator = `+${"-".repeat(nameWidth + 2)}+${"-".repeat(priceWidth + 2)}+${"-".repeat(quantityWidth + 2)}+`;
-  
+    const dash = `--------------------------------`;
+    const totalprice = `${calculateTotalPrice(productsToSend)}`.padStart(priceWidth, " ")
+    const delivery = `${getdeliverycharge}`.padStart(priceWidth, " ")
     // Combine header, separator, and product details
-    const detailedItems = `\n${productDetails}`;
+    const detailedItems = `\n${dash}\n${header}\n${dash}\n${productDetails}\n${dash}`;
   
     const invoiceText = `
   \x1B\x21\x30 Foodies Hub \x1B\x21\x00
@@ -385,26 +387,25 @@ const CustomerDetail = () => {
     }
   Customer: ${customerName || "Guest Customer"}
   Phone: ${customerPhone || "N/A"}
-  Address: ${customerAddress || "N/A"}
-  
-  \x1B\x21\x10     -----Items-----     \x1B\x21\x00 
+  Address: ${customerAddress || "N/A"}  
   ${detailedItems}
   ${
       hasDeliveryCharge
-        ? `Item Total: ₹${calculateTotalPrice(productsToSend).toFixed(2)}`
+        ? `           Item Total:  ${totalprice} `
         : " "
     }
   ${
-      hasDeliveryCharge ? `Service Charge: ₹${getdeliverycharge.toFixed(2)}` : " "
+      hasDeliveryCharge ? `       Service Charge:  ${delivery}\n${dash}` : " "
     }
-  \x1B\x21\x30 Total: ₹${
+\x1B\x21\x30\x1B\x34Total: Rs ${
       calculateTotalPrice(productsToSend) + getdeliverycharge
-    }/-\x1B\x21\x00
+    }/-\x1B\x21\x00\x1B\x35
 
     Thank You Visit Again!
   ---------------------------
   
        Powered by BillZo
+       
   `;
   
     // Send the content to RawBT (add more parameters if required)
