@@ -7,61 +7,40 @@ const Advance = ({ orders, setOrders }) => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [password, setPassword] = useState("");
   const [isAdvancedAccessGranted, setIsAdvancedAccessGranted] = useState(false);
-  const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
   const [advancedCheckboxState, setAdvancedCheckboxState] = useState(false);
-  const [normalCheckboxState, setNormalCheckboxState] = useState(false);
   const navigate = useNavigate();
 
   const HARD_CODED_PASSWORD = "1947"; // Hardcoded password
 
   useEffect(() => {
     const advancedFeatureAccess = localStorage.getItem("advancedFeature");
-    const passwordCorrect = localStorage.getItem("passwordCorrect");
-
+    
     if (advancedFeatureAccess === "true") {
       setIsAdvancedAccessGranted(true);
       setAdvancedCheckboxState(true);
     }
-    if (passwordCorrect === "true") {
-      setIsPasswordCorrect(true);
-      setNormalCheckboxState(true);
-    }
   }, []);
 
-  // Handle Password Submission
   const handlePasswordSubmit = () => {
     if (password === HARD_CODED_PASSWORD) {
       setIsAdvancedAccessGranted(true);
-      setIsPasswordCorrect(true);
-      setShowPasswordPopup(false);
       setAdvancedCheckboxState(true);
-      setNormalCheckboxState(true);
+      setShowPasswordPopup(false);
       localStorage.setItem("advancedFeature", "true");
-      localStorage.setItem("passwordCorrect", "true");
       alert("Access granted!");
     } else {
       alert("Incorrect password. Try again.");
     }
   };
 
-  // Handle Advanced Checkbox Click
   const handleAdvancedCheckboxClick = () => {
     if (advancedCheckboxState) {
-      // Uncheck logic
       setAdvancedCheckboxState(false);
       setIsAdvancedAccessGranted(false);
       localStorage.removeItem("advancedFeature");
       alert("Access removed!");
     } else {
-      // Check logic
-      setShowPasswordPopup(true); // Show password popup
-    }
-  };
-
-  // Handle Normal Checkbox Click
-  const handleNormalCheckboxClick = () => {
-    if (!normalCheckboxState) {
-      setShowPasswordPopup(true); // Show password popup
+      setShowPasswordPopup(true);
     }
   };
 
@@ -75,22 +54,9 @@ const Advance = ({ orders, setOrders }) => {
             <input
               type="checkbox"
               checked={advancedCheckboxState}
-              onChange={handleAdvancedCheckboxClick} // Manage state directly here
+              onChange={handleAdvancedCheckboxClick}
             />
             <h4>Access Advanced Features</h4>
-          </label>
-        </div>
-
-        {/* Normal Features Checkbox */}
-        <div className="checkbox-container">
-          <label>
-            <input
-              type="checkbox"
-              checked={normalCheckboxState}
-              onChange={() => {}} // Prevent default behavior
-              onClick={handleNormalCheckboxClick} // Show popup if unchecked
-            />
-            <h4>Employee</h4>
           </label>
         </div>
 
