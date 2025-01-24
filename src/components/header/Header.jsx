@@ -27,11 +27,21 @@ const Header = ({ headerName, setSearch, onClick }) => {
     }
   };
 
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (confirmLogout) {
+      // Remove userBaseUrl from local storage
+      localStorage.removeItem("userBaseUrl");
+
+      window.location.reload();
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg fixed-top custom-navbar">
       <div className="container-fluid">
         <NavLink
-        onClick={onClick}
+          onClick={onClick}
           className={({ isActive }) =>
             isActive ? "navbar-brand active" : "navbar-brand"
           }
@@ -53,7 +63,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
           </form>
         )}
         <button
-         ref={toggleButtonRef}
+          ref={toggleButtonRef}
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -111,19 +121,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
                 }
                 to="/customer-data"
               >
-                 Data
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                className={({ isActive }) =>
-                  isActive
-                    ? "nav-link custom-text active"
-                    : "nav-link custom-text"
-                }
-                to="/customer-detail"
-              >
-                Customer Detail
+                Data
               </NavLink>
             </li>
             <li className="nav-item">
@@ -138,6 +136,14 @@ const Header = ({ headerName, setSearch, onClick }) => {
                 Setting
               </NavLink>
             </li>
+            <li className="nav-item">
+              <button
+                className="nav-link custom-text"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </li>
           </ul>
           <form className="d-flex-search" role="search">
             <input
@@ -146,7 +152,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
               placeholder="Search products..."
               aria-label="Search"
               onChange={handleSearchChange}
-              onKeyDown={handleKeyDown} 
+              onKeyDown={handleKeyDown}
             />
             {/* <button className="btn btn-outline-success" type="submit">Search</button> */}
             {/* <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/> */}

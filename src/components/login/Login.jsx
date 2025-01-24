@@ -37,11 +37,11 @@ const Login = ({ setBaseUrl }) => {
     <div className="login-form">
       <h2>Login to continue</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
+      <div className="form">
       <div className="form-group">
       <label>Mobile</label>
       <input
         type="number"
-        placeholder="number..."
         value={number}
         onChange={(e) => setnumber(e.target.value)}
       />
@@ -50,10 +50,10 @@ const Login = ({ setBaseUrl }) => {
       <label>Password</label>
       <input
         type="password"
-        placeholder="Password..."
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      </div>
       </div>
       <button onClick={handleLogin} className="login-btn">Login</button>
     </div>
