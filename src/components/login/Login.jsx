@@ -6,18 +6,7 @@ const Login = ({ setBaseUrl }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const USERS = [
-    {
-      number: "7015823645",
-      password: "1234",
-      baseUrl: "https://invoice-backend-7czy.vercel.app/api",
-    },
-    {
-      number: "8168901827",
-      password: "1234",
-      baseUrl: "https://backend-alpha-tawny.vercel.app/api",
-    },
-  ];
+  const USERS = JSON.parse(import.meta.env.VITE_USERS || "[]");
 
   const handleLogin = () => {
     const user = USERS.find(
