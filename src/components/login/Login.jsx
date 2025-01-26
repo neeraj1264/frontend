@@ -5,7 +5,8 @@ const Login = ({ setBaseUrl }) => {
   const [number, setnumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
+  const [modalMessage, setModalMessage] = useState(""); // Modal message
   const USERS = JSON.parse(import.meta.env.VITE_USERS || "[]");
 
   const handleLogin = () => {
@@ -14,13 +15,19 @@ const Login = ({ setBaseUrl }) => {
     );
 
     if (user) {
-      setBaseUrl(user.baseUrl); // Set BASE_URL dynamically
-      localStorage.setItem("userBaseUrl", user.baseUrl); // Optional: Persist BASE_URL in localStorage
-      alert("Login successful!");
+      setModalMessage("Login successful!");
+      setIsModalOpen(true); // Show the success modal
+      setTimeout(() => {
+        setBaseUrl(user.baseUrl); // Set BASE_URL dynamically
+        localStorage.setItem("userBaseUrl", user.baseUrl); // Persist BASE_URL in localStorage
+      }, 1000); // Delay for 2 seconds (2000 milliseconds)
     } else {
       setError("Invalid credentials. Please try again.");
     }
   };
+
+  const login = localStorage.getItem("userBaseUrl");
+  const modalBackgroundColor = !login ? "green" : ""; // Set background color conditionally
 
   return (
     <div className="login-form">
@@ -47,6 +54,14 @@ const Login = ({ setBaseUrl }) => {
       <button onClick={handleLogin} className="login-btn">
         Login
       </button>
+      {/* Custom Modal */}
+      {isModalOpen && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal-content" style={{ backgroundColor: modalBackgroundColor , color: "white" }}>
+            <p className="custom-modal-message">{modalMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

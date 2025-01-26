@@ -9,12 +9,15 @@ const Advance = ({ orders, setOrders }) => {
   const [isAdvancedAccessGranted, setIsAdvancedAccessGranted] = useState(false);
   const [advancedCheckboxState, setAdvancedCheckboxState] = useState(false);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
+  const [modalMessage, setModalMessage] = useState(""); // Modal message
 
-  const HARD_CODED_PASSWORD = "1947"; // Hardcoded password
+  const users = JSON.parse(import.meta.env.VITE_USERS);
+  const HARD_CODED_PASSWORD = users.advancepassword;
 
   useEffect(() => {
     const advancedFeatureAccess = localStorage.getItem("advancedFeature");
-    
+
     if (advancedFeatureAccess === "true") {
       setIsAdvancedAccessGranted(true);
       setAdvancedCheckboxState(true);
@@ -23,26 +26,45 @@ const Advance = ({ orders, setOrders }) => {
 
   const handlePasswordSubmit = () => {
     if (password === HARD_CODED_PASSWORD) {
-      setIsAdvancedAccessGranted(true);
-      setAdvancedCheckboxState(true);
-      setShowPasswordPopup(false);
       localStorage.setItem("advancedFeature", "true");
-      alert("Access granted!");
+      setTimeout(() => {
+        setIsAdvancedAccessGranted(true);
+        setAdvancedCheckboxState(true);
+        setShowPasswordPopup(false);
+      }, 1500);
+      setModalMessage("Access granted");
+      setIsModalOpen(true); // Show the success modal
+      setTimeout(() => {
+        setIsModalOpen(false);
+      }, 1500);
     } else {
-      alert("Incorrect password. Try again.");
+      setModalMessage("Incorrect password. Try again.");
+      setIsModalOpen(true); // Show the success modal
+      setTimeout(() => {
+        setIsModalOpen(false);
+      }, 1500);
     }
   };
 
   const handleAdvancedCheckboxClick = () => {
     if (advancedCheckboxState) {
-      setAdvancedCheckboxState(false);
-      setIsAdvancedAccessGranted(false);
       localStorage.removeItem("advancedFeature");
-      alert("Access removed!");
+      setModalMessage("Access removed!");
+      setIsModalOpen(true); // Show the success modal
+      setTimeout(() => {
+        setAdvancedCheckboxState(false);
+        setIsAdvancedAccessGranted(false);
+      }, 1500);
+      setTimeout(() => {
+        setIsModalOpen(false);
+      }, 1500);
     } else {
       setShowPasswordPopup(true);
     }
   };
+
+  const advancedFeatureAccess = localStorage.getItem("advancedFeature");
+  const modalBackgroundColor = advancedFeatureAccess === "true" ? "green" : "red"; // Set background color conditionally
 
   return (
     <>
@@ -79,6 +101,15 @@ const Advance = ({ orders, setOrders }) => {
           </div>
         )}
       </div>
+
+      {/* Custom Modal */}
+      {isModalOpen && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal-content-history"  style={{ backgroundColor: modalBackgroundColor }} >
+            <p className="custom-modal-message-history">{modalMessage}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 };

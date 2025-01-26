@@ -58,40 +58,6 @@ const App = () => {
     };
   }, []);
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    // Check if the entered password is correct
-    if (password === "0000") {
-      localStorage.setItem("passwordCorrect", "true"); // Store password status in localStorage
-      setIsPasswordCorrect(true);
-      setShowPasswordPopup(false); // Close the password popup
-    } else {
-      alert("Incorrect password. Please try again.");
-    }
-  };
-
-  const handleInstallClick = () => {
-    if (installPrompt instanceof Event) {
-      const installEvent = installPrompt;
-      installEvent.prompt();
-      installEvent.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === "accepted") {
-          console.log("User accepted the A2HS prompt");
-        } else {
-          console.log("User dismissed the A2HS prompt");
-        }
-        setInstallPrompt(null);
-      });
-    }
-  };
-
-  const handleCloseClick = () => {
-    setInstallPrompt(null);
-  };
-
   useEffect(() => {
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault();

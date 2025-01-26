@@ -3,7 +3,8 @@ import "./Header.css";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ headerName, setSearch, onClick }) => {
-  const [isSearchVisible, setIsSearchVisible] = useState(false); // Track visibility of search input
+  const [isSearchVisible, setIsSearchVisible] = useState(false); // Track visibility of search
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Track logout modal visibility
   const toggleButtonRef = useRef(null); // Ref for the toggle button
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,13 +29,9 @@ const Header = ({ headerName, setSearch, onClick }) => {
   };
 
   const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to logout?");
-    if (confirmLogout) {
-      // Remove userBaseUrl from local storage
-      localStorage.removeItem("userBaseUrl");
-
-      window.location.reload();
-    }
+    // Remove userBaseUrl from local storage
+    localStorage.removeItem("userBaseUrl");
+    window.location.reload();
   };
 
   return (
@@ -139,7 +136,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
             <li className="nav-item">
               <button
                 className="nav-link custom-text"
-                onClick={handleLogout}
+                onClick={() => setIsLogoutModalOpen(true)}
               >
                 Logout
               </button>
@@ -159,6 +156,30 @@ const Header = ({ headerName, setSearch, onClick }) => {
           </form>
         </div>
       </div>
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal-content">
+            <p className="custom-modal-message">
+              Are you sure you want to logout?
+            </p>
+            <div className="custom-modal-actions">
+              <button
+                className="custom-modal-button cancel-button"
+                onClick={() => setIsLogoutModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="custom-modal-button confirm-button"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

@@ -14,6 +14,8 @@ const History = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [showRemoveBtn, setShowRemoveBtn] = useState(false);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
+  const [modalMessage, setModalMessage] = useState(""); // Modal message
 
   // Show remove button on long press
 let pressTimer;
@@ -45,8 +47,8 @@ const handleRemoveOrder = async (orderId) => {
     
     console.log('Order removed successfully from both MongoDB and state');
   }else {
-    alert("Advance feature not granted.")
-    navigate("/advance")
+    setModalMessage("Advance feature not granted.");
+    setIsModalOpen(true); // Show the success modal
   }
  } catch (error) {
     console.error('Error removing order:', error.message);
@@ -269,6 +271,22 @@ const handleRemoveOrder = async (orderId) => {
           <p>No orders found for {filter.toLowerCase()}.</p>
         )}
       </div>
+      )}
+        {/* Custom Modal */}
+        {isModalOpen && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal-content-history">
+            <p className="custom-modal-message-history">{modalMessage}</p>
+            <div className="custom-modal-actions">
+            <button
+                className="custom-modal-button confirm-button-history"
+                onClick={() => setIsModalOpen(false)}
+              >
+                ok
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -108,3 +108,21 @@ hr{
   animation: pulsate 1s infinite;
 }
 
+.custom-modal-content-history{
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+  background: red;
+}
+
+.custom-modal-message-history{
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: white;
+}
+
+.confirm-button-history{
+  margin: auto;
+  padding: .5rem 1rem;
+}
