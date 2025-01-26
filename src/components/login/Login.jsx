@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Login.css"
+import "./Login.css";
 
 const Login = ({ setBaseUrl }) => {
   const [number, setnumber] = useState("");
@@ -27,24 +27,26 @@ const Login = ({ setBaseUrl }) => {
       <h2>Login to continue</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <div className="form">
-      <div className="form-group">
-      <label>Mobile</label>
-      <input
-        type="number"
-        value={number}
-        onChange={(e) => setnumber(e.target.value)}
-      />
+        <div className="form-group">
+          <label>Mobile</label>
+          <input
+            type="number"
+            value={number}
+            onChange={(e) => setnumber(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
       </div>
-      <div className="form-group">
-      <label>Password</label>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      </div>
-      </div>
-      <button onClick={handleLogin} className="login-btn">Login</button>
+      <button onClick={handleLogin} className="login-btn">
+        Login
+      </button>
     </div>
   );
 };
