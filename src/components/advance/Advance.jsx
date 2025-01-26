@@ -14,6 +14,7 @@ const Advance = ({ orders, setOrders }) => {
 
   const advpassword = localStorage.getItem("advpassword")
   const AdvPassword = advpassword;
+  console.log("Advance password is :",AdvPassword);
 
   useEffect(() => {
     const advancedFeatureAccess = localStorage.getItem("advancedFeature");
