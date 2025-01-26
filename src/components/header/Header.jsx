@@ -31,6 +31,7 @@ const Header = ({ headerName, setSearch, onClick }) => {
   const handleLogout = () => {
     // Remove userBaseUrl from local storage
     localStorage.removeItem("userBaseUrl");
+    localStorage.removeItem("advancedFeature");
     window.location.reload();
   };
 
