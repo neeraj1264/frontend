@@ -12,8 +12,8 @@ const Advance = ({ orders, setOrders }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
   const [modalMessage, setModalMessage] = useState(""); // Modal message
 
-  const users = JSON.parse(import.meta.env.VITE_USERS);
-  const HARD_CODED_PASSWORD = users.advancepassword;
+  const advpassword = localStorage.getItem("advpassword")
+  const AdvPassword = advpassword;
 
   useEffect(() => {
     const advancedFeatureAccess = localStorage.getItem("advancedFeature");
@@ -25,7 +25,7 @@ const Advance = ({ orders, setOrders }) => {
   }, []);
 
   const handlePasswordSubmit = () => {
-    if (password === HARD_CODED_PASSWORD) {
+    if (password === AdvPassword) {
       localStorage.setItem("advancedFeature", "true");
       setTimeout(() => {
         setIsAdvancedAccessGranted(true);
