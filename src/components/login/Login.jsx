@@ -21,6 +21,8 @@ const Login = ({ setBaseUrl }) => {
         setBaseUrl(user.baseUrl); // Set BASE_URL dynamically
         localStorage.setItem("userBaseUrl", user.baseUrl); // Persist BASE_URL in localStorage
         localStorage.setItem("advpassword", user.advancepassword);
+        localStorage.setItem("RestorentName", user.restoname);
+        localStorage.setItem("Address", user.address);
       }, 1000); // Delay for 2 seconds (2000 milliseconds)
     } else {
       setError("Invalid credentials. Please try again.");
