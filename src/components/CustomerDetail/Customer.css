@@ -23,8 +23,8 @@
   margin: 0.5rem;
   padding: 0.5rem;
   box-sizing: border-box; 
-  border: 1px solid var(--bg);
-  border-radius: 1rem
+  border-radius: 1rem;
+  display: flex;
 }
 
 .done {
@@ -118,4 +118,41 @@ td:nth-child(2),
 td:nth-child(3),
 td:nth-child(4) {
   width: auto; /* Corresponds to 'auto' in widths */
+}
+
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popupContent {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.popupButton {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.popupCloseButton {
+  margin-top: 10px;
+  background-color: red;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }

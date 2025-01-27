@@ -217,9 +217,8 @@ const handleRemoveOrder = async (orderId) => {
             onTouchEnd={handlePressEnd}
             >
               <hr />
-              <div onClick={() => toggleOrder(order.id)}>
+              <div onClick={() => toggleOrder(order.id)} className="order-lable">
               <h2
-                style={{ cursor: "pointer", fontSize: "1rem" }}
               >
                 Order {filteredOrders.length - index} -{" "}
                 <span>{formatDate(order.timestamp)}</span>

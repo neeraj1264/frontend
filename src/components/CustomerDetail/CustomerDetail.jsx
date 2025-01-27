@@ -725,23 +725,23 @@ const CustomerDetail = () => {
       </button>
       {/* Modal Popup */}
       {showPopup && (
-        <div style={styles.popupOverlay}>
-          <div style={styles.popupContent}>
+        <div className="popupOverlay">
+          <div className="popupContent">
             <h2>Select Action</h2>
-            <button onClick={handleSendToWhatsApp} style={styles.popupButton}>
+            <button onClick={handleSendToWhatsApp} className="popupButton">
               Send to WhatsApp
             </button>
-            <button onClick={handlePngDownload} style={styles.popupButton}>
+            <button onClick={handlePngDownload} className="popupButton">
               Download Invoice
             </button>
-            <button onClick={handleRawBTPrint} style={styles.popupButton}>
+            <button onClick={handleRawBTPrint} className="popupButton">
               Mobile Print
             </button>
-            <button onClick={MobilePrint} style={styles.popupButton}>
+            <button onClick={MobilePrint} className="popupButton">
               Usb Print
             </button>
 
-            <button onClick={handleClosePopup} style={styles.popupCloseButton}>
+            <button onClick={handleClosePopup} className="popupCloseButton">
               Cancel
             </button>
           </div>
@@ -751,40 +751,5 @@ const CustomerDetail = () => {
   );
 };
 
-const styles = {
-  popupOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  popupContent: {
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    textAlign: "center",
-  },
-  popupButton: {
-    display: "block",
-    width: "100%",
-    margin: "10px 0",
-    padding: "10px",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-  popupCloseButton: {
-    marginTop: "10px",
-    backgroundColor: "red",
-    color: "#fff",
-    padding: "5px 10px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-};
 
 export default CustomerDetail;
