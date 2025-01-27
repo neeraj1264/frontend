@@ -1,13 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Header.css";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ headerName, setSearch, onClick }) => {
   const [isSearchVisible, setIsSearchVisible] = useState(false); // Track visibility of search
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Track logout modal visibility
+  const [isDarkMode, setIsDarkMode] = useState(false); // Theme state
   const toggleButtonRef = useRef(null); // Ref for the toggle button
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Load saved theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDarkMode(true);
+      document.body.classList.add("dark-theme");
+    }
+  }, []);
+
   const handleSearchChange = (event) => {
     setSearch(event.target.value); // Update search state
   };
@@ -19,7 +30,6 @@ const Header = ({ headerName, setSearch, onClick }) => {
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      // Simulate a button click or toggle the search visibility when Enter is pressed
       toggleSearch();
 
       if (toggleButtonRef.current) {
@@ -33,6 +43,18 @@ const Header = ({ headerName, setSearch, onClick }) => {
     localStorage.removeItem("userBaseUrl");
     localStorage.removeItem("advancedFeature");
     window.location.reload();
+  };
+
+  // Toggle theme between light and dark mode
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+    if (isDarkMode) {
+      document.body.classList.remove("dark-theme");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.body.classList.add("dark-theme");
+      localStorage.setItem("theme", "dark");
+    }
   };
 
   return (
@@ -137,24 +159,20 @@ const Header = ({ headerName, setSearch, onClick }) => {
             <li className="nav-item">
               <button
                 className="nav-link custom-text"
+                onClick={toggleTheme}
+              >
+                {isDarkMode ? "Light Mode" : "Dark Mode"}
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className="nav-link custom-text"
                 onClick={() => setIsLogoutModalOpen(true)}
               >
                 Logout
               </button>
             </li>
           </ul>
-          <form className="d-flex-search" role="search">
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Search products..."
-              aria-label="Search"
-              onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-            />
-            {/* <button className="btn btn-outline-success" type="submit">Search</button> */}
-            {/* <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/> */}
-          </form>
         </div>
       </div>
       {/* Logout Confirmation Modal */}

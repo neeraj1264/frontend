@@ -61,11 +61,12 @@
   border: 2px solid var(--bg);
   border-radius: 2rem;
   background: #eee;
+  padding: .3rem.5rem !important;
 }
-input::placeholder {
-  color: var(--bg); /* Change this to your desired color */
-  opacity: 1; /* Ensure the placeholder is fully visible */
-}
+/* input::placeholder {
+  color: var(--bg); 
+  opacity: 1;
+} */
 
 input:focus::placeholder {
   color: var(--bg); /* Optional: Change color when input is focused */

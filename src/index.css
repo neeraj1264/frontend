@@ -1,3 +1,50 @@
 body{
 margin: 0;
 }
+body.dark-theme {
+    background-color: #1a202c; /* Dark background */
+    color: #edf2f7; /* Light text */
+  }
+  
+  body.dark-theme .navbar {
+    background-color: #2d3748; /* Dark navbar */
+  }
+  
+  body.dark-theme .navbar-brand,
+  body.dark-theme .nav-link {
+    color: #edf2f7; /* Light text on navbar items */
+  }
+  
+  /* body.dark-theme .navbar-toggler-icon {
+    background-color: #edf2f7;
+  } */
+  
+  body.dark-theme .form-control{
+    background-color: #333;
+  }
+
+  body.dark-theme input::placeholder {
+  color: white; 
+  opacity: 1;
+}
+
+body.dark-theme .main{
+    background-color: #1a202c;
+}
+
+body.dark-theme .category-container{
+    background: #2d3748;
+    color: white;
+}
+
+body.dark-theme .category{
+    background: #2d3748;
+    color: white;
+}
+
+body.dark-theme .p-name{
+    color: white;
+}
+body.dark-theme .add-btn{
+    background-color: #1a202c;
+}
