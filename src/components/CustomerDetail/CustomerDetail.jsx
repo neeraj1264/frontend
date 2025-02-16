@@ -6,7 +6,7 @@ import { handleScreenshot } from "../Utils/DownloadPng"; // Import the function
 import "./Customer.css";
 // import { handleScreenshotAsPDF } from "../Utils/DownloadPdf";
 import Header from "../header/Header";
-import { sendorder, setdata } from "../../api";
+import { fetchcustomerdata, sendorder, setdata } from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -28,6 +28,10 @@ const CustomerDetail = () => {
   const [orders, setOrders] = useState([]);
   const getdeliveryCharge = localStorage.getItem("deliveryCharge");
   const deliveryChargeAmount = parseFloat(getdeliveryCharge) || 0;
+  // State to hold all saved customers for auto-fill
+  const [savedCustomers, setSavedCustomers] = useState([]);
+  // State to hold suggestions based on current phone input
+  const [phoneSuggestions, setPhoneSuggestions] = useState([]);
 
   const invoiceRef = useRef(); // Reference to the hidden invoice content
   const navigate = useNavigate();
@@ -43,6 +47,51 @@ const CustomerDetail = () => {
     setproductsToSend(storedProducts);
     setTotalAmount(storedAmount);
   }, []);
+
+ useEffect(() => {
+    // Fetch customer data from API (or use localStorage fallback)
+    const fetchData = async () => {
+      try {
+        const response = await fetchcustomerdata();
+        console.log("Fetched customers:", response);
+        const customersArray = Array.isArray(response)
+          ? response
+          : response.data || [];
+        setSavedCustomers(customersArray);
+      } catch (error) {
+        console.error("Error fetching customer data:", error.message);
+        const localStorageCustomers = JSON.parse(localStorage.getItem("customers")) || [];
+        if (localStorageCustomers.length > 0) {
+          setSavedCustomers(localStorageCustomers);
+        }
+      }
+    };
+    fetchData();
+  }, []);
+  
+
+ // Update suggestions based on current phone input (prefix match)
+ useEffect(() => {
+  if (customerPhone.trim().length === 10) {
+    setPhoneSuggestions([]);
+  } else if (customerPhone.trim() !== "") {
+    const suggestions = savedCustomers.filter((customer) =>
+      String(customer.phone).trim().startsWith(customerPhone.trim())
+    );
+    setPhoneSuggestions(suggestions);
+  } else {
+    setPhoneSuggestions([]);
+  }
+}, [customerPhone, savedCustomers]);
+
+// When a suggestion is clicked, fill the fields and clear suggestions.
+const handleSuggestionClick = (customer) => {
+  setCustomerPhone(String(customer.phone));
+  setCustomerName(customer.name);
+  setCustomerAddress(customer.address);
+  setPhoneSuggestions([]);
+};
+  
 
   const handleSendToWhatsApp = () => {
 
@@ -439,6 +488,35 @@ const CustomerDetail = () => {
           placeholder="Customer phone..."
         />
       </div>
+        {/* Suggestions Dropdown */}
+        {phoneSuggestions.length > 0 && (
+          <ul className="suggestions" style={{
+            background: "#fff",
+            border: "2px solid black",
+            zIndex: 10,
+            listStyle: "none",
+            padding: 0,
+            margin: "auto",
+            width: "90%",
+            maxHeight: "150px",
+            overflowY: "auto",
+            borderRadius: "1rem"
+          }}>
+            {phoneSuggestions.map((suggestion) => (
+              <li
+                key={suggestion.phone}
+                onClick={() => handleSuggestionClick(suggestion)}
+                style={{
+                  padding: "0.5rem",
+                  cursor: "pointer",
+                  borderBottom: "1px solid #eee"
+                }}
+              >
+                {suggestion.phone} - {suggestion.name}
+              </li>
+            ))}
+          </ul>
+        )}
       <div className="cust-inputs">
         <input
           type="text"
