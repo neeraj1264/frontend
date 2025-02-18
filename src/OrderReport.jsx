@@ -6,28 +6,32 @@ import Header from "./components/header/Header";
 const OrderReport = () => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const pieChartRef = useRef(null); // Reference for the Pie Chart canvas
+  const pieChartInstanceRef = useRef(null); // Store Pie Chart instance
+
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterType, setFilterType] = useState("weekly");
   const [selectedPeriod, setSelectedPeriod] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
+  // Fetch orders when the component mounts
   useEffect(() => {
     const getOrders = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const fetchedOrders = await fetchOrders();
         setOrders(fetchedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error.message);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
-
     getOrders();
   }, []);
 
+  // Bar Chart: Overall Orders and Revenue
   useEffect(() => {
     if (orders.length === 0) {
       console.warn("No orders available.");
@@ -50,7 +54,6 @@ const OrderReport = () => {
       const filteredOrdersList = orders.filter(
         (order) => new Date(order.timestamp) >= startOfMonth
       );
-      console.log("Orders This Month:", filteredOrdersList);
 
       const weeksInMonth = [0, 0, 0, 0, 0];
       const ordersPerWeek = [0, 0, 0, 0, 0];
@@ -75,12 +78,11 @@ const OrderReport = () => {
 
       orders.forEach((order) => {
         const orderDate = new Date(order.timestamp);
-        const monthKey = `${orderDate.getFullYear()}-${
-          orderDate.getMonth() + 1
-        }`;
+        const monthKey = `${orderDate.getFullYear()}-${orderDate.getMonth() + 1}`;
         ordersByMonth[monthKey] =
           (ordersByMonth[monthKey] || 0) + order.totalAmount;
-        orderCountByMonth[monthKey] = (orderCountByMonth[monthKey] || 0) + 1;
+        orderCountByMonth[monthKey] =
+          (orderCountByMonth[monthKey] || 0) + 1;
 
         if (!dataMap[monthKey]) dataMap[monthKey] = [];
         dataMap[monthKey].push(order);
@@ -97,8 +99,10 @@ const OrderReport = () => {
       orders.forEach((order) => {
         const orderDate = new Date(order.timestamp);
         const year = orderDate.getFullYear();
-        ordersByYear[year] = (ordersByYear[year] || 0) + order.totalAmount;
-        orderCountByYear[year] = (orderCountByYear[year] || 0) + 1;
+        ordersByYear[year] =
+          (ordersByYear[year] || 0) + order.totalAmount;
+        orderCountByYear[year] =
+          (orderCountByYear[year] || 0) + 1;
 
         if (!dataMap[year]) dataMap[year] = [];
         dataMap[year].push(order);
@@ -134,7 +138,6 @@ const OrderReport = () => {
             const period = labels[clickedIndex];
             setSelectedPeriod(period);
             setFilteredOrders(dataMap[period] || []);
-            console.log(`Clicked on: ${period}`, dataMap[period]);
           } else {
             setSelectedPeriod(null);
             setFilteredOrders([]);
@@ -157,6 +160,70 @@ const OrderReport = () => {
     });
   }, [orders, filterType]);
 
+  // Pie Chart: Top 5 Selling Products
+  useEffect(() => {
+    // Destroy previous pie chart instance if it exists
+    if (pieChartInstanceRef.current) {
+      pieChartInstanceRef.current.destroy();
+    }
+
+    // Compute top 5 selling products from the filtered orders
+    const topProducts = {};
+    filteredOrders.forEach((order) => {
+      if (order.products && Array.isArray(order.products)) {
+        order.products.forEach((product) => {
+          const name = product.productName || product.name || "Unknown";
+          const quantity = product.quantity || 1;
+          topProducts[name] = (topProducts[name] || 0) + quantity;
+        });
+      }
+    });
+    const top5Products = Object.entries(topProducts)
+      .sort(([, aQty], [, bQty]) => bQty - aQty)
+      .slice(0, 5);
+
+    // Only create the pie chart if we have data
+    if (top5Products.length > 0) {
+      const pieLabels = top5Products.map(([name]) => name);
+      const pieData = top5Products.map(([, qty]) => qty);
+      const ctxPie = pieChartRef.current.getContext("2d");
+
+      pieChartInstanceRef.current = new Chart(ctxPie, {
+        type: "pie",
+        data: {
+          labels: pieLabels,
+          datasets: [
+            {
+              data: pieData,
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.6)",
+                "rgba(54, 162, 235, 0.6)",
+                "rgba(255, 206, 86, 0.6)",
+                "rgba(75, 192, 192, 0.6)",
+                "rgba(153, 102, 255, 0.6)",
+              ],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: {
+              callbacks: {
+                label: (tooltipItem) => {
+                  const label = tooltipItem.label;
+                  const value = tooltipItem.raw;
+                  return `${label}: ${value}`;
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+  }, [filteredOrders]);
+
   // Calculate total revenue for the selected period
   const totalRevenue = filteredOrders.reduce(
     (acc, order) => acc + order.totalAmount,
@@ -175,7 +242,6 @@ const OrderReport = () => {
         ) : (
           <>
             <h1>Order Report</h1>
-
             <select
               value={filterType}
               onChange={(e) => {
@@ -190,6 +256,7 @@ const OrderReport = () => {
               <option value="yearly">Yearly</option>
             </select>
 
+            {/* Bar Chart */}
             <canvas ref={chartRef} width={"90%"} height={"50%"} />
 
             {selectedPeriod && (
@@ -198,52 +265,62 @@ const OrderReport = () => {
                   Showing Data for: <strong>{selectedPeriod}</strong>
                 </h2>
                 <h2 className="data-show">
-                  Total Order: <strong>{filteredOrders.length}</strong>
+                  Total Orders: <strong>{filteredOrders.length}</strong>
                 </h2>
                 <h2 className="data-show">
                   Total Revenue: <strong>Rs.{totalRevenue.toFixed(2)}</strong>
                 </h2>
-                <h2>Filtered Orders</h2>{" "}
               </>
             )}
+
             {filteredOrders.length === 0 ? (
               <p>No orders available for the selected period.</p>
             ) : (
-              <table
-                border="1"
-                style={{
-                  width: "96%",
-                  margin: "20px auto",
-                  borderCollapse: "collapse",
-                }}
-              >
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Customer Name</th>
-                    <th>Total Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredOrders.map((order) => (
-                    <tr key={order._id}>
-                      <td style={{ fontSize: "1rem" }}>
-                        {new Date(order.timestamp).toLocaleString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                          hour12: true, // Use 24-hour format
-                        })    .replace(/\//g, "-")}
-                      </td>
-                      <td>{order.customerName || "Unknown"}</td>
-                      <td>Rs.{order.totalAmount.toFixed(2)}</td>
+              <>
+                <table
+                  border="1"
+                  style={{
+                    width: "96%",
+                    margin: "20px auto",
+                    borderCollapse: "collapse",
+                  }}
+                >
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Customer Name</th>
+                      <th>Total Amount</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredOrders.map((order) => (
+                      <tr key={order._id}>
+                        <td style={{ fontSize: "1rem" }}>
+                          {new Date(order.timestamp)
+                            .toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                            })
+                            .replace(/\//g, "-")}
+                        </td>
+                        <td>{order.customerName || "Unknown"}</td>
+                        <td>Rs.{order.totalAmount.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pie Chart for Top 5 Selling Products */}
+                <h2 style={{ marginTop: "2rem" }}>
+                  Top 5 Selling Products (Pie Chart)
+                </h2>
+                <canvas ref={pieChartRef} width={"50%"} height={"50%"} />
+              </>
             )}
           </>
         )}
