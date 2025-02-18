@@ -110,3 +110,8 @@ body{
   }
 }
 
+.data-show{
+  text-align: left;
+  margin-left: .5rem;
+  font-size: 1rem;
+}

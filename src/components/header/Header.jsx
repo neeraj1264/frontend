@@ -139,6 +139,18 @@ const Header = ({ headerName, setSearch, onClick }) => {
                     ? "nav-link custom-text active"
                     : "nav-link custom-text"
                 }
+                to="/report"
+              >
+                Order Report
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                className={({ isActive }) =>
+                  isActive
+                    ? "nav-link custom-text active"
+                    : "nav-link custom-text"
+                }
                 to="/customer-data"
               >
                 Data
