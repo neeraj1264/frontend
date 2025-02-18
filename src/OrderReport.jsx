@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import Chart from "chart.js/auto";
 import { fetchOrders } from "./api";
 import Header from "./components/header/Header";
@@ -14,8 +14,9 @@ const OrderReport = () => {
   const [filterType, setFilterType] = useState("weekly");
   const [selectedPeriod, setSelectedPeriod] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [expandedOrderId, setExpandedOrderId] = useState(null); // Track expanded order
 
-  // Fetch orders when the component mounts
+  // Fetch orders when component mounts
   useEffect(() => {
     const getOrders = async () => {
       setLoading(true);
@@ -28,10 +29,11 @@ const OrderReport = () => {
         setLoading(false);
       }
     };
+
     getOrders();
   }, []);
 
-  // Bar Chart: Overall Orders and Revenue
+  // Bar Chart for overall orders & revenue
   useEffect(() => {
     if (orders.length === 0) {
       console.warn("No orders available.");
@@ -138,9 +140,11 @@ const OrderReport = () => {
             const period = labels[clickedIndex];
             setSelectedPeriod(period);
             setFilteredOrders(dataMap[period] || []);
+            setExpandedOrderId(null); // collapse any expanded order when period changes
           } else {
             setSelectedPeriod(null);
             setFilteredOrders([]);
+            setExpandedOrderId(null);
           }
         },
         plugins: {
@@ -160,14 +164,8 @@ const OrderReport = () => {
     });
   }, [orders, filterType]);
 
-  // Pie Chart: Top 5 Selling Products
-  useEffect(() => {
-    // Destroy previous pie chart instance if it exists
-    if (pieChartInstanceRef.current) {
-      pieChartInstanceRef.current.destroy();
-    }
-
-    // Compute top 5 selling products from the filtered orders
+  // Compute Top 5 Selling Products from filtered orders using useMemo
+  const top5Products = useMemo(() => {
     const topProducts = {};
     filteredOrders.forEach((order) => {
       if (order.products && Array.isArray(order.products)) {
@@ -178,11 +176,18 @@ const OrderReport = () => {
         });
       }
     });
-    const top5Products = Object.entries(topProducts)
+    return Object.entries(topProducts)
       .sort(([, aQty], [, bQty]) => bQty - aQty)
       .slice(0, 5);
+  }, [filteredOrders]);
 
-    // Only create the pie chart if we have data
+  // Pie Chart for Top 5 Selling Products
+  useEffect(() => {
+    // Destroy previous pie chart instance if it exists
+    if (pieChartInstanceRef.current) {
+      pieChartInstanceRef.current.destroy();
+    }
+
     if (top5Products.length > 0) {
       const pieLabels = top5Products.map(([name]) => name);
       const pieData = top5Products.map(([, qty]) => qty);
@@ -222,13 +227,30 @@ const OrderReport = () => {
         },
       });
     }
-  }, [filteredOrders]);
+  }, [top5Products]);
 
   // Calculate total revenue for the selected period
   const totalRevenue = filteredOrders.reduce(
     (acc, order) => acc + order.totalAmount,
     0
   );
+
+  // Toggle expanded order row to show/hide product details
+  const toggleOrder = (orderId) => {
+    setExpandedOrderId((prevId) => (prevId === orderId ? null : orderId));
+  };
+
+  // Format the date string for display
+  const formatDate = (timestamp) =>
+    new Date(timestamp).toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    }).replace(/\//g, "-");
 
   return (
     <>
@@ -248,6 +270,7 @@ const OrderReport = () => {
                 setFilterType(e.target.value);
                 setSelectedPeriod(null);
                 setFilteredOrders([]);
+                setExpandedOrderId(null);
               }}
               style={{ marginBottom: "10px", padding: "5px" }}
             >
@@ -277,6 +300,7 @@ const OrderReport = () => {
               <p>No orders available for the selected period.</p>
             ) : (
               <>
+                {/* Orders Table with expandable rows */}
                 <table
                   border="1"
                   style={{
@@ -294,30 +318,65 @@ const OrderReport = () => {
                   </thead>
                   <tbody>
                     {filteredOrders.map((order) => (
-                      <tr key={order._id}>
-                        <td style={{ fontSize: "1rem" }}>
-                          {new Date(order.timestamp)
-                            .toLocaleString("en-GB", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: true,
-                            })
-                            .replace(/\//g, "-")}
-                        </td>
-                        <td>{order.customerName || "Unknown"}</td>
-                        <td>Rs.{order.totalAmount.toFixed(2)}</td>
-                      </tr>
+                      <React.Fragment key={order._id}>
+                        <tr
+                          onClick={() => toggleOrder(order._id)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <td style={{ fontSize: "1rem" }}>
+                            {formatDate(order.timestamp)}
+                          </td>
+                          <td>{order.customerName || "Unknown"}</td>
+                          <td>Rs.{order.totalAmount.toFixed(2)}</td>
+                        </tr>
+                        {expandedOrderId === order._id && (
+                          <tr>
+                            <td colSpan="3">
+                              <table
+                                border="1"
+                                style={{
+                                  width: "100%",
+                                  marginTop: "10px",
+                                  borderCollapse: "collapse",
+                                }}
+                              >
+                                <thead>
+                                  <tr>
+                                    <th>Product Name</th>
+                                    <th>Price (₹)</th>
+                                    <th>Quantity</th>
+                                    <th>Total (₹)</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {order.products &&
+                                    order.products.map((product, idx) => (
+                                      <tr key={idx}>
+                                        <td>
+                                          {product.productName ||
+                                            product.name ||
+                                            "Unknown"}
+                                        </td>
+                                        <td>{product.price}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>
+                                          {product.price * product.quantity}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
 
-                {/* Pie Chart for Top 5 Selling Products */}
+                {/* Pie Chart & Top 5 Selling Products Table */}
                 <h2 style={{ marginTop: "2rem" }}>
-                  Top 5 Selling Products (Pie Chart)
+                  Top 5 Selling Products (Pie Chart & Table)
                 </h2>
                 <canvas ref={pieChartRef} width={"50%"} height={"50%"} />
               </>
