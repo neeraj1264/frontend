@@ -223,24 +223,46 @@
 
 .invoice-btn {
   position: fixed;
-  bottom: 1rem;
+  bottom: 0;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   width: calc(100%);
-  padding: 0 0.5rem;
+  /* padding: 0 0.5rem; */
+  background: #eee;
 }
 
 .invoice-btn button {
-  background: var(--bg);
-  color: white;
-  font-size: 1.4rem;
-  /* padding: 0.2rem 0.8rem; */
-  border-radius: 0.7rem;
-  border-color: var(--bg);
-  align-items: center;
+
   display: flex;
+  width: 50%;
 }
 
+.invoice-next-btn{
+  color: white;
+  margin: auto;
+  padding: 10px;
+  font-size: 1rem;
+  background: var(--bg);
+}
+.invoice-next-btn h2{
+  margin: auto;
+  font-size: 1rem;
+  color: white;
+  font-weight: bold;
+}
+.invoice-kot-btn{
+  color: white;
+  margin: auto;
+  padding: 10px;
+  font-size: 1rem;
+  background: white;
+}
+.invoice-kot-btn h2{
+  margin: auto;
+  font-size: 1rem;
+  color: var(--bg);
+  font-weight: bold;
+}
 .Invoice-arrow {
   font-size: 0.8rem !important;
   margin-left: 0.4rem;

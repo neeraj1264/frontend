@@ -90,6 +90,9 @@ body.dark-theme .add-btn {
 body.dark-theme .invoice-btn button {
   color: var(--out);
 }
+body.dark-theme .invoice-kot-btn {
+  background: var(--in);
+  }
 body.dark-theme .customise-text {
   color: var(--bg);
 }
