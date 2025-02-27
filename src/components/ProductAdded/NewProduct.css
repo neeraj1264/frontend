@@ -176,4 +176,12 @@ font-size: 1rem;
   margin-bottom: 10px;
 }
 
-
+.create-invoice-btn button {
+  display: flex;
+  width: 100%;
+}
+.create-invoice-btn{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}

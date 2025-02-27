@@ -103,10 +103,10 @@
   border: none;
   display: flex;
   flex-direction: column;
-  height: 70ch;
+  height: 80ch;
   z-index: 1;
   padding-top: 2rem;
-  padding-bottom: 8rem;
+  padding-bottom: 12rem;
 }
 .category-bar button {
   margin: 0.5rem;
@@ -120,7 +120,7 @@
   align-items: center;
   align-content: center;
   width: auto;
-  box-shadow: 0px 2px 0px;
+  box-shadow: 2px 2px 2px 1px;
 }
 .main {
   background: #eee;
@@ -244,11 +244,9 @@
 }
 
 .invoice-btn button {
-
   display: flex;
   width: 50%;
 }
-
 .invoice-next-btn{
   color: white;
   margin: auto;
