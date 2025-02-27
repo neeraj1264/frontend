@@ -96,10 +96,10 @@
   overflow-y: auto;
   white-space: nowrap;
   scroll-behavior: smooth;
-  background: var(--bg);
+  background: white;
   scrollbar-width: none;
   border-radius: 0 0 1rem 1rem;
-  box-shadow: 2px 2px 6px 2px black;
+  box-shadow: 2px 2px 6px 2px var(--bg);
   border: none;
   display: flex;
   flex-direction: column;
@@ -120,7 +120,9 @@
   align-items: center;
   align-content: center;
   width: auto;
-  box-shadow: 2px 2px 2px 1px;
+  box-shadow: 2px 2px 2px var(--bg);
+  color: var(--bg);
+  border: none;
 }
 .main {
   background: #eee;
@@ -239,13 +241,14 @@
   /* justify-content: space-between; */
   width: calc(100%);
   /* padding: 0 0.5rem; */
-  background: #eee;
+  background: transparent;
   z-index: 2;
 }
 
 .invoice-btn button {
   display: flex;
   width: 50%;
+  /* border: none; */
 }
 .invoice-next-btn{
   color: white;
@@ -253,10 +256,11 @@
   padding: 10px;
   font-size: 1rem;
   background: var(--bg);
+  border-radius: 0 1rem 0 0;
 }
 .invoice-next-btn h2{
   margin: auto;
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: white;
   font-weight: bold;
 }
@@ -266,10 +270,11 @@
   padding: 10px;
   font-size: 1rem;
   background: white;
+  border-radius: 1rem 0 0 0;
 }
 .invoice-kot-btn h2{
   margin: auto;
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: var(--bg);
   font-weight: bold;
 }

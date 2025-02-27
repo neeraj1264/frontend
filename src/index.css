@@ -91,7 +91,7 @@ body.dark-theme .invoice-btn button {
   color: var(--out);
 }
 body.dark-theme .invoice-kot-btn {
-  background: var(--in);
+  background: var(--out);
   }
 body.dark-theme .customise-text {
   color: var(--bg);
@@ -107,6 +107,15 @@ body.dark-theme .popup-contentt h3 {
 }
 body.dark-theme .variety-label span {
   color: var(--light);
+}
+
+body.dark-theme .category-bar button{
+  background: var(--out);
+}
+
+body.dark-theme .category-bar{
+background: var(--in);
+/* box-shadow: 2px 2px 2px 2px var(--in); */
 }
 
 /* -------------------------customer detail page ------------------------ */
