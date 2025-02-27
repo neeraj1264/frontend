@@ -407,7 +407,7 @@ const Invoice = () => {
     const detailedItems = `\n${dash}\n${header}\n${dash}\n${productDetails}\n${dash}`;
   
     const invoiceText = `
-  \x1B\x21\x30 KOT \x1B\x21\x00
+  \x1B\x21\x30      KOT \x1B\x21\x00
   
   Date: ${
       new Date().toLocaleDateString("en-GB", {
