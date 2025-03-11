@@ -110,7 +110,7 @@
   position: relative;
 }
 
-.customer-order-date-group ul ul li::before {
+/* .customer-order-date-group ul ul li::before {
   content: counter(product-counter) ". ";
   font-weight: bold;
-}
+} */
