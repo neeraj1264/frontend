@@ -64,9 +64,53 @@
   font-size: 1rem;
   color: #333;
   margin: 5px 0;
+  padding: 5px;
+  font-weight: 800;
 }
 
 /* Highlighted field labels (strong) */
 .customer-item strong {
   color: #555;
+}
+
+.customer-order-date-group{
+  background: #eee;
+  padding: 1rem .2rem;
+  border-radius: 1rem;
+  margin: 1rem 0;
+}
+.customer-order-date-group h4{
+  text-align: center;
+  margin: 0;
+  font-weight: 800;
+}
+.time{
+  display: block;
+  text-align: center;
+  font-weight: 700;
+}
+.customer-order-date-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.customer-order-date-group li {
+  text-decoration: none;
+  padding: 5px;
+}
+
+/* Reset counter only for product list */
+.customer-order-date-group ul ul {
+  counter-reset: product-counter;
+}
+
+.customer-order-date-group ul ul li {
+  counter-increment: product-counter;
+  position: relative;
+}
+
+.customer-order-date-group ul ul li::before {
+  content: counter(product-counter) ". ";
+  font-weight: bold;
 }
