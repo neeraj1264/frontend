@@ -109,8 +109,3 @@
   counter-increment: product-counter;
   position: relative;
 }
-
-/* .customer-order-date-group ul ul li::before {
-  content: counter(product-counter) ". ";
-  font-weight: bold;
-} */
