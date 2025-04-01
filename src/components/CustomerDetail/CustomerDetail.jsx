@@ -32,6 +32,8 @@ const CustomerDetail = () => {
   const [savedCustomers, setSavedCustomers] = useState([]);
   // State to hold suggestions based on current phone input
   const [phoneSuggestions, setPhoneSuggestions] = useState([]);
+  // New state for name suggestions
+  const [nameSuggestions, setNameSuggestions] = useState([]);
 
   const invoiceRef = useRef(); // Reference to the hidden invoice content
   const navigate = useNavigate();
@@ -84,14 +86,35 @@ const CustomerDetail = () => {
   }
 }, [customerPhone, savedCustomers]);
 
+  // New effect for filtering suggestions by customer name
+  useEffect(() => {
+    if (customerName.trim() === "") {
+      setNameSuggestions([]);
+    } else {
+      const suggestions = savedCustomers.filter((customer) =>
+        customer.name.toLowerCase().startsWith(customerName.trim().toLowerCase())
+      );
+      setNameSuggestions(suggestions);
+    }
+  }, [customerName, savedCustomers]);
+
 // When a suggestion is clicked, fill the fields and clear suggestions.
 const handleSuggestionClick = (customer) => {
   setCustomerPhone(String(customer.phone));
   setCustomerName(customer.name);
   setCustomerAddress(customer.address);
   setPhoneSuggestions([]);
+  setNameSuggestions([]);
 };
   
+  // New handler for clicking on a name suggestion.
+  const handleNameSuggestionClick = (customer) => {
+    setCustomerName(customer.name);
+    setCustomerPhone(String(customer.phone));
+    setCustomerAddress(customer.address);
+    setNameSuggestions([]);
+    setPhoneSuggestions([]); // Optionally clear phone suggestions too
+  };
 
   const handleSendToWhatsApp = () => {
 
@@ -123,7 +146,6 @@ const handleSuggestionClick = (customer) => {
       `*🍔🍟🍕 ${restaurantName} 🍕🍟🍔*\n\n` +
       `Order: *${orderId}*` +
         (customerPhone ? `\nPhone: *${customerPhone}*` : "") +
-        (customerName ? `\nName: *${customerName}*` : "") +
         (customerAddress ? `\nAddress: *${customerAddress}*` : "") +
         `\nAmount: *₹${currentTotalAmount}*` +
         `\n\n----------item----------\n${productDetails}` + // No extra newline here
@@ -349,9 +371,9 @@ const handleSuggestionClick = (customer) => {
     const phoneValue = e.target.value;
 
     // Only allow numeric input and ensure length is <= 10
-    if (/^\d*$/.test(phoneValue) && phoneValue.length <= 10) {
+    // if (/^\d*$/.test(phoneValue) && phoneValue.length <= 10) {
       setCustomerPhone(phoneValue);
-    }
+    // }
 
    
   };
@@ -434,7 +456,6 @@ const handleSuggestionClick = (customer) => {
         hour12: true, // Enables 12-hour format
       })
     }
-  Customer: ${customerName || "Guest Customer"}
   Phone: ${customerPhone || "N/A"}
   Address: ${customerAddress || "N/A"}  
   ${detailedItems}
@@ -479,6 +500,38 @@ const handleSuggestionClick = (customer) => {
           onChange={(e) => setCustomerName(e.target.value)}
           placeholder="Customer name..."
         />
+         {/* Name Suggestions Dropdown */}
+         {nameSuggestions.length > 0 && (
+          <ul
+            className="suggestions"
+            style={{
+              background: "#fff",
+              border: "2px solid black",
+              zIndex: 10,
+              listStyle: "none",
+              padding: 0,
+              margin: "auto",
+              width: "90%",
+              maxHeight: "150px",
+              overflowY: "auto",
+              borderRadius: "1rem",
+            }}
+          >
+            {nameSuggestions.map((suggestion) => (
+              <li
+                key={suggestion.phone} // Assuming phone is unique
+                onClick={() => handleNameSuggestionClick(suggestion)}
+                style={{
+                  padding: "0.5rem",
+                  cursor: "pointer",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
+                {suggestion.name} - {suggestion.phone}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div className="cust-inputs">
         <input
@@ -582,7 +635,6 @@ const handleSuggestionClick = (customer) => {
           <p style={{ fontSize: "15px" }}>
             Customer Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {customerName ? customerName : "Guest Customer"}
           </p>
           <p style={{ fontSize: "15px" }}>
             Phone Number &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -
@@ -697,11 +749,6 @@ const handleSuggestionClick = (customer) => {
               })}
           </p>
 
-          {customerName && (
-            <p style={{ fontSize: "12px" }}>
-              Customer Name &nbsp;- &nbsp;{customerName}
-            </p>
-          )}
           {customerPhone && (
             <p style={{ fontSize: "12px" }}>
               Phone Number &nbsp;- &nbsp;{customerPhone}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Login.css";
 
 const Login = ({ setBaseUrl }) => {
-  const [number, setnumber] = useState("");
+  const [username, setusername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
@@ -11,7 +11,7 @@ const Login = ({ setBaseUrl }) => {
 
   const handleLogin = () => {
     const user = USERS.find(
-      (u) => u.number === number && u.password === password
+      (u) => u.username === username && u.password === password
     );
 
     if (user) {
@@ -38,11 +38,11 @@ const Login = ({ setBaseUrl }) => {
       {error && <p style={{ color: "red" }}>{error}</p>}
       <div className="form">
         <div className="form-group">
-          <label>Mobile</label>
+          <label>username</label>
           <input
-            type="number"
-            value={number}
-            onChange={(e) => setnumber(e.target.value)}
+            type="text"
+            value={username}
+            onChange={(e) => setusername(e.target.value)}
           />
         </div>
         <div className="form-group">
