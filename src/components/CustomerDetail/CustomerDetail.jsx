@@ -471,8 +471,8 @@ const CustomerDetail = () => {
   Address: ${customerAddress || "N/A"}  
   ${detailedItems}
   ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
-  ${hasDeliveryCharge ? `       Service Charge: +${delivery}\n${dash}` : " "}
-  ${parsedDiscount ? `             Discount: -${parsedDiscount}\n${dash}` : " "}
+  ${hasDeliveryCharge ? `       Service Charge:  ${delivery}` : " "}
+  ${parsedDiscount ? `             Discount: -${parsedDiscount}\n${dash}` : " "} 
 \x1B\x21\x30\x1B\x34Total: Rs ${
       calculateTotalPrice(productsToSend) + getdeliverycharge - parsedDiscount
     }/-\x1B\x21\x00\x1B\x35
