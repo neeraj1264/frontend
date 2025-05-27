@@ -436,8 +436,12 @@ const CustomerDetail = () => {
     const separator = `+${"-".repeat(nameWidth + 2)}+${"-".repeat(
       priceWidth + 2
     )}+${"-".repeat(quantityWidth + 2)}+`;
-    const dash = `--------------------------------`;
+    const dash = `--------------------------------`; 
     const totalprice = `${calculateTotalPrice(productsToSend)}`.padStart(
+      priceWidth,
+      " "
+    );
+       const DiscountAmount = `${parsedDiscount}`.padStart(
       priceWidth,
       " "
     );
@@ -472,7 +476,7 @@ const CustomerDetail = () => {
   ${detailedItems}
   ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
   ${hasDeliveryCharge ? `       Service Charge:  ${delivery}` : " "}
-  ${parsedDiscount ? `             Discount: -${parsedDiscount}\n${dash}` : " "} 
+  ${parsedDiscount ? `             Discount: -${DiscountAmount}\n${dash}` : " "} 
 \x1B\x21\x30\x1B\x34Total: Rs ${
       calculateTotalPrice(productsToSend) + getdeliverycharge - parsedDiscount
     }/-\x1B\x21\x00\x1B\x35
