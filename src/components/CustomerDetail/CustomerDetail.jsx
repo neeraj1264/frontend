@@ -279,23 +279,6 @@ const CustomerDetail = () => {
     }, 10);
   };
 
-  const convertImageToBase64 = (imagePath) => {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.crossOrigin = "Anonymous"; // To handle cross-origin issues if needed
-      image.src = imagePath;
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        const context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0);
-        resolve(canvas.toDataURL("image/png"));
-      };
-      image.onerror = (error) => reject(error);
-    });
-  };
-
   const MobilePrint = async () => {
     try {
       const kotContent = document.getElementById("mobileinvoice").innerHTML;
@@ -488,9 +471,10 @@ const CustomerDetail = () => {
   Address: ${customerAddress || "N/A"}  
   ${detailedItems}
   ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
-  ${hasDeliveryCharge ? `       Service Charge:  ${delivery}\n${dash}` : " "}
+  ${hasDeliveryCharge ? `       Service Charge: +${delivery}\n${dash}` : " "}
+  ${parsedDiscount ? `             Discount: -${parsedDiscount}\n${dash}` : " "}
 \x1B\x21\x30\x1B\x34Total: Rs ${
-      calculateTotalPrice(productsToSend) + getdeliverycharge
+      calculateTotalPrice(productsToSend) + getdeliverycharge - parsedDiscount
     }/-\x1B\x21\x00\x1B\x35
 
     Thank You Visit Again!
