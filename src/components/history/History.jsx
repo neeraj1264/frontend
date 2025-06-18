@@ -4,6 +4,7 @@ import { FaArrowLeft , FaWhatsapp} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { fetchOrders, removeOrder } from "../../api";
 import Header from "../header/Header";
+import RawBTPrintButton from "../Utils/RawBTPrintButton";
 
 const History = () => {
   const [orders, setOrders] = useState([]);
@@ -227,7 +228,12 @@ const handleRemoveOrder = async (orderId) => {
                 <strong>Amount Received: ₹{order.totalAmount}</strong>{" "}
                 {order.phone && (
     <FaWhatsapp className="whatsapp" onClick={() => handleWhatsappClick(order)} />
-  )}              </p>
+  )}         
+     <RawBTPrintButton
+          productsToSend={order.products}
+          customerPhone={order.phone}
+        />
+             </p>
    {showRemoveBtn && (
             <button
               className="remove-btn"

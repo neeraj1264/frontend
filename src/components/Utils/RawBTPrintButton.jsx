@@ -6,7 +6,6 @@ export default function RawBTPrintButton({
   parsedDiscount,
   getdeliverycharge,
   customerPhone,
-  customerAddress,
 }) {
   // Helper to calculate total price
   const calculateTotalPrice = (items = []) =>
@@ -112,7 +111,6 @@ export default function RawBTPrintButton({
     })
   }
   Phone: ${customerPhone || "N/A"}
-  Address: ${customerAddress || "N/A"}  
   ${detailedItems}
   ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
   ${hasDeliveryCharge ? `       Service Charge:  ${delivery}` : " "}
