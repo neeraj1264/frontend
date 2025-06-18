@@ -724,6 +724,8 @@ const CustomerDetail = () => {
         productsToSend={productsToSend}
         parsedDiscount={parsedDiscount}
         getdeliverycharge={getdeliverycharge}
+        customerPhone={customerPhone}
+        customerAddress={customerAddress}
       />
             <button onClick={MobilePrint} className="popupButton">
               Usb Print
