@@ -9,6 +9,8 @@ import Header from "../header/Header";
 import { fetchcustomerdata, sendorder, setdata } from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import WhatsAppButton from "../Utils/WhatsappOrder";
+import RawBTPrintButton from "../Utils/RawBTPrintButton";
 
 const toastOptions = {
   position: "bottom-right",
@@ -124,63 +126,6 @@ const CustomerDetail = () => {
     setPhoneSuggestions([]); // Optionally clear phone suggestions too
   };
 
-  const handleSendToWhatsApp = () => {
-    const restaurantName = RestorentName;
-
-    const currentTotalAmount =
-      calculateTotalPrice(productsToSend) +
-      deliveryChargeAmount -
-      parsedDiscount;
-
-    // Map product details into a formatted string
-    const productDetails = productsToSend
-      .map((product) => {
-        const quantity = product.quantity || 1;
-        const size = product.size ? ` ${product.size}` : ""; // Include size only if it exists
-        return `${quantity}.0 x ${product.name}${size} = ₹${
-          product.price * quantity
-        }`;
-      })
-      .join("\n"); // Join product details with a single newline
-
-    // Check if deliveryCharge exists
-    const serviceChargeText = deliveryCharge
-      ? `Service Charge: ₹${deliveryChargeAmount}` // No extra newline
-      : "";
-
-    const DiscountAmount = parsedDiscount
-      ? `Discount: -${parsedDiscount}` // No extra newline
-      : "";
-
-    const orderId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    // Construct the WhatsApp message
-    const message = encodeURIComponent(
-      `*🍔🍟🍕 ${restaurantName} 🍕🍟🍔*\n\n` +
-        `Order: *${orderId}*` +
-        (customerPhone ? `\nPhone: *${customerPhone}*` : "") +
-        (customerAddress ? `\nAddress: *${customerAddress}*` : "") +
-        `\nAmount: *₹${currentTotalAmount}*` +
-        `\n\n----------item----------\n${productDetails}` + // No extra newline here
-        (serviceChargeText ? `\n${serviceChargeText}` : "") + // Add only if serviceChargeText exists
-        (DiscountAmount ? `\n${DiscountAmount}` : "") // Add only if Discount exists
-    );
-
-    const phoneNumber = customerPhone;
-
-    const formattedPhoneNumber = phoneNumber
-      ? `+91${phoneNumber}` // Prepend +91 for India if the phone number is present
-      : phoneNumber;
-
-    if (phoneNumber) {
-      window.open(
-        `https://wa.me/${formattedPhoneNumber}?text=${message}`,
-        "_blank"
-      );
-    } else {
-      window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
-    }
-  };
 
   const handleBack = () => {
     navigate(-1);
@@ -372,129 +317,6 @@ const CustomerDetail = () => {
     // }
   };
 
-  const handleRawBTPrint = () => {
-    const hasDeliveryCharge = getdeliverycharge !== 0; // Check if delivery charge exists
-
-    const orderWidth = 2;
-    const nameWidth = 16; // Set a fixed width for product name
-    const priceWidth = 4; // Set a fixed width for price
-    const quantityWidth = 2; // Set a fixed width for quantity
-
-    // Helper function to break a product name into multiple lines if needed
-    const breakProductName = (name, maxLength) => {
-      const lines = [];
-      while (name.length > maxLength) {
-        lines.push(name.substring(0, maxLength)); // Add a line of the name
-        name = name.substring(maxLength); // Remove the part that has been used
-      }
-      lines.push(name); // Add the last remaining part of the name
-      return lines;
-    };
-
-    // Map product details into a formatted string with borders
-    const productDetails = productsToSend
-      .map((product, index) => {
-        const orderNumber = `${index + 1}`.padStart(orderWidth, " "); // Format the order number
-        const productSize = product.size ? `(${product.size})` : "";
-
-        // Break the product name into multiple lines if it exceeds the fixed width
-        const nameLines = breakProductName(
-          product.name + " " + productSize,
-          nameWidth
-        );
-
-        // Format the price and quantity with proper padding
-        const paddedPrice = `${product.price}`.padStart(priceWidth, " "); // Pad price to the left
-        const paddedQuantity = `${product.quantity}`.padStart(
-          quantityWidth,
-          " "
-        ); // Pad quantity to the left
-
-        // Combine name lines with the proper padding for price and quantity
-        const productText = nameLines
-          .map((line, index) => {
-            if (index === 0) {
-              return `${orderNumber}. ${line.padEnd(
-                nameWidth,
-                " "
-              )} ${paddedQuantity} x ${paddedPrice} `;
-            } else {
-              return `    ${line.padEnd(nameWidth, " ")} ${"".padEnd(
-                priceWidth,
-                " "
-              )} ${"".padEnd(quantityWidth, " ")} `;
-            }
-          })
-          .join(""); // Join the product name lines with a newline
-
-        return productText;
-      })
-      .join("\n");
-
-    // Add a border for the header
-    const header = ` No    Item Name     Qty  price `;
-    const separator = `+${"-".repeat(nameWidth + 2)}+${"-".repeat(
-      priceWidth + 2
-    )}+${"-".repeat(quantityWidth + 2)}+`;
-    const dash = `--------------------------------`; 
-    const totalprice = `${calculateTotalPrice(productsToSend)}`.padStart(
-      priceWidth,
-      " "
-    );
-       const DiscountAmount = `${parsedDiscount}`.padStart(
-      priceWidth,
-      " "
-    );
-    const delivery = `${getdeliverycharge}`.padStart(priceWidth, " ");
-    // Combine header, separator, and product details
-    const detailedItems = `\n${dash}\n${header}\n${dash}\n${productDetails}\n${dash}`;
-
-    const invoiceText = `
-  \x1B\x21\x30 Foodies Hub \x1B\x21\x00
-  \x1B\x61\x01  Pehowa, Haryana, 136128\x1B\x61\x00
-  \x1B\x61\x01  Phone: +91 70158-23645\x1B\x61\x00
-
-  \x1B\x21\x10-----Invoice Details-----\x1B\x21\x00
-  
-  Bill No: #${Math.floor(1000 + Math.random() * 9000)}
-  Date: ${
-    new Date().toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }) +
-    " " +
-    new Date().toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true, // Enables 12-hour format
-    })
-  }
-  Phone: ${customerPhone || "N/A"}
-  Address: ${customerAddress || "N/A"}  
-  ${detailedItems}
-  ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
-  ${hasDeliveryCharge ? `       Service Charge:  ${delivery}` : " "}
-  ${parsedDiscount ? `             Discount: -${DiscountAmount}\n${dash}` : " "} 
-\x1B\x21\x30\x1B\x34Total: Rs ${
-      calculateTotalPrice(productsToSend) + getdeliverycharge - parsedDiscount
-    }/-\x1B\x21\x00\x1B\x35
-
-    Thank You Visit Again!
-  ---------------------------
-  
-       Powered by BillZo
-       
-  `;
-
-    // Send the content to RawBT (add more parameters if required)
-    const encodedText = encodeURIComponent(invoiceText);
-    const rawBTUrl = `intent:${encodedText}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;`;
-
-    // Trigger RawBT
-    window.location.href = rawBTUrl;
-  };
 
   const getdeliverycharge = localStorage.getItem("deliveryCharge")
     ? parseFloat(localStorage.getItem("deliveryCharge"))
@@ -886,15 +708,23 @@ const CustomerDetail = () => {
         <div className="popupOverlay">
           <div className="popupContent">
             <h2>Select Action</h2>
-            <button onClick={handleSendToWhatsApp} className="popupButton">
-              Send to WhatsApp
-            </button>
+            <WhatsAppButton
+        productsToSend={productsToSend}
+        deliveryChargeAmount={deliveryChargeAmount}
+        deliveryCharge={deliveryCharge}
+        parsedDiscount={parsedDiscount}
+        customerPhone={customerPhone}
+        customerAddress={customerAddress}
+        restaurantName={RestorentName}
+      />
             <button onClick={handlePngDownload} className="popupButton">
               Download Invoice
             </button>
-            <button onClick={handleRawBTPrint} className="popupButton">
-              Mobile Print
-            </button>
+              <RawBTPrintButton
+        productsToSend={productsToSend}
+        parsedDiscount={parsedDiscount}
+        getdeliverycharge={getdeliverycharge}
+      />
             <button onClick={MobilePrint} className="popupButton">
               Usb Print
             </button>

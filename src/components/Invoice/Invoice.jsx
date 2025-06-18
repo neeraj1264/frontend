@@ -316,13 +316,7 @@ const Invoice = () => {
 
   // Navigate to the customer details page
   const handleDone = () => {
-    if (productsToSend.length === 0) {
-      toast.error(
-        "Please add at least one product before proceeding.",
-        toastOptions
-      );
-      return; // Prevent navigation if no products are selected
-    }
+    
 
     navigate("/customer-detail"); // Navigate to customer detail page
   };
