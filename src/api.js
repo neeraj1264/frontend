@@ -7,7 +7,7 @@ const getBaseUrl = () => {
 };
 
 const fetchWithBaseUrl = async (endpoint, options = {}) => {
-  const BASE_URL = getBaseUrl(); // Dynamically get the base URL
+  const BASE_URL = "https://invoice-backend-7czy.vercel.app/api"; // Dynamically get the base URL
   const response = await fetch(`${BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {

@@ -24,8 +24,8 @@ const CustomerDetail = () => {
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
 
-  const [deliveryCharge, setDeliveryCharge] = useState(0);
-  const [discount, setDiscount] = useState(0); // New discount state
+  const [deliveryCharge, setDeliveryCharge] = useState();
+  const [discount, setDiscount] = useState(); // New discount state
   const parsedDiscount = parseFloat(discount) || 0; // Parsed discount
 
   const [showPopup, setShowPopup] = useState(false);

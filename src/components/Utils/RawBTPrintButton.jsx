@@ -6,7 +6,10 @@ export default function RawBTPrintButton({
   parsedDiscount,
   deliveryChargeAmount,
   customerPhone,
-}) {
+ icon: Icon,
+  timestamp,
+}){
+
   // Helper to calculate total price
   const calculateTotalPrice = (items = []) =>
     items.reduce((sum, p) => sum + p.price * (p.quantity || 1), 0);
@@ -88,6 +91,19 @@ export default function RawBTPrintButton({
     // Combine header, separator, and product details
     const detailedItems = `\n${dash}\n${header}\n${dash}\n${productDetails}\n${dash}`;
 
+    const date = timestamp ? new Date(timestamp) : new Date();
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    const formattedTime = date.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
     const invoiceText = `
   \x1B\x21\x30 Foodies Hub \x1B\x21\x00
   \x1B\x61\x01  Pehowa, Haryana, 136128\x1B\x61\x00
@@ -96,24 +112,11 @@ export default function RawBTPrintButton({
   \x1B\x21\x10-----Invoice Details-----\x1B\x21\x00
   
   Bill No: #${Math.floor(1000 + Math.random() * 9000)}
-  Date: ${
-    new Date().toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }) +
-    " " +
-    new Date().toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true, // Enables 12-hour format
-    })
-  }
+  Date: ${formattedDate} ${formattedTime}
   Phone: ${customerPhone || "N/A"}
   ${detailedItems}
   ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
-  ${hasDeliveryCharge ? `       Service Charge:  ${delivery}` : " "}
+  ${hasDeliveryCharge ? `      Delivery Charge: +${delivery}` : " "}
   ${parsedDiscount ? `             Discount: -${DiscountAmount}\n${dash}` : " "} 
 \x1B\x21\x30\x1B\x34Total: Rs ${
       calculateTotalPrice(productsToSend) + deliveryChargeAmount - parsedDiscount
@@ -135,8 +138,12 @@ export default function RawBTPrintButton({
   };
 
   return (
-    <button onClick={handleRawBTPrint} className="popupButton">
-      Mobile Print
-    </button>
+    <div onClick={handleRawBTPrint}>
+      {Icon ? (
+        <Icon/>
+      ) : (
+        <button className="popupButton" >Mobile Print</button>
+      )}
+      </div>
   );
 }

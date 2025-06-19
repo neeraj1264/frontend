@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./History.css";
-import { FaArrowLeft , FaWhatsapp} from "react-icons/fa";
+import { FaPrint  , FaWhatsapp} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { fetchOrders, removeOrder } from "../../api";
 import Header from "../header/Header";
@@ -223,7 +223,7 @@ const handleRemoveOrder = async (orderId) => {
                 Order {filteredOrders.length - index} -{" "}
                 <span>{formatDate(order.timestamp)}</span>
               </h2>
-              <p>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
                 <strong>Amount Received: ₹{order.totalAmount}</strong>{" "}
                 {order.phone && (
     <FaWhatsapp className="whatsapp" onClick={() => handleWhatsappClick(order)} />
@@ -231,10 +231,23 @@ const handleRemoveOrder = async (orderId) => {
      <RawBTPrintButton
           productsToSend={order.products}
           customerPhone={order.phone}
-          getdeliverycharge={parseFloat(order.delivery) || 0} 
+          deliveryChargeAmount={order.delivery} 
           parsedDiscount={order.discount}
+          timestamp={order.timestamp}
+            icon={() => (
+    <FaPrint
+      size={24}
+      style={{
+        color: "#1abc9c",
+        marginLeft: "2rem",
+        transition: "transform 0.1s ease",
+      }}
+      onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.2)")}
+      onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+    />
+  )}
         />
-             </p>
+             </div>
    {showRemoveBtn && (
             <button
               className="remove-btn"
