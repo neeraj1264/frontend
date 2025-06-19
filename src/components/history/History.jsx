@@ -63,7 +63,6 @@ const handleRemoveOrder = async (orderId) => {
       const data = await fetchOrders(); // Call the API function
 
       setOrders(data);
-
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Start of today at midnight
 
@@ -232,7 +231,8 @@ const handleRemoveOrder = async (orderId) => {
      <RawBTPrintButton
           productsToSend={order.products}
           customerPhone={order.phone}
-          getdeliverycharge={order.serviceCharge} 
+          getdeliverycharge={parseFloat(order.delivery) || 0} 
+          parsedDiscount={order.discount}
         />
              </p>
    {showRemoveBtn && (

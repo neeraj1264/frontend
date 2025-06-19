@@ -24,8 +24,8 @@ const CustomerDetail = () => {
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
 
-  const [deliveryCharge, setDeliveryCharge] = useState("");
-  const [discount, setDiscount] = useState(""); // New discount state
+  const [deliveryCharge, setDeliveryCharge] = useState(0);
+  const [discount, setDiscount] = useState(0); // New discount state
   const parsedDiscount = parseFloat(discount) || 0; // Parsed discount
 
   const [showPopup, setShowPopup] = useState(false);
@@ -126,7 +126,6 @@ const CustomerDetail = () => {
     setPhoneSuggestions([]); // Optionally clear phone suggestions too
   };
 
-
   const handleBack = () => {
     navigate(-1);
   };
@@ -161,7 +160,7 @@ const CustomerDetail = () => {
       discount: parsedDiscount, // save discount
       delivery: parseFloat(deliveryCharge) || 0,
     };
-
+    console.log(order);
     const customerDataObject = {
       id: orderId,
       name: customerName,
@@ -180,6 +179,9 @@ const CustomerDetail = () => {
     localStorage.setItem("orders", JSON.stringify(savedOrders));
 
     try {
+      console.log("🔶 Final order object:", order);
+console.log("🔶 JSON payload:", JSON.stringify(order));
+
       // Send the order to your backend to be saved in MongoDB
       const data = await sendorder(order);
       console.log("Order created:", data);
@@ -317,7 +319,6 @@ const CustomerDetail = () => {
     setCustomerPhone(phoneValue);
     // }
   };
-
 
   return (
     <div>
@@ -648,7 +649,9 @@ const CustomerDetail = () => {
             {deliveryChargeAmount !== 0 && (
               <div className="total">
                 <p style={{ margin: "0" }}>Service Charge:</p>
-                <p style={{ margin: "0" }}>+{deliveryChargeAmount.toFixed(2)}</p>
+                <p style={{ margin: "0" }}>
+                  +{deliveryChargeAmount.toFixed(2)}
+                </p>
               </div>
             )}
 
@@ -707,23 +710,23 @@ const CustomerDetail = () => {
           <div className="popupContent">
             <h2>Select Action</h2>
             <WhatsAppButton
-        productsToSend={productsToSend}
-        deliveryChargeAmount={deliveryChargeAmount}
-        deliveryCharge={deliveryCharge}
-        parsedDiscount={parsedDiscount}
-        customerPhone={customerPhone}
-        customerAddress={customerAddress}
-        restaurantName={RestorentName}
-      />
+              productsToSend={productsToSend}
+              deliveryChargeAmount={deliveryChargeAmount}
+              deliveryCharge={deliveryCharge}
+              parsedDiscount={parsedDiscount}
+              customerPhone={customerPhone}
+              customerAddress={customerAddress}
+              restaurantName={RestorentName}
+            />
             <button onClick={handlePngDownload} className="popupButton">
               Download Invoice
             </button>
-              <RawBTPrintButton
-        productsToSend={productsToSend}
-        parsedDiscount={parsedDiscount}
-        deliveryChargeAmount={parseFloat(deliveryCharge) || 0}
-        customerPhone={customerPhone}
-      />
+            <RawBTPrintButton
+              productsToSend={productsToSend}
+              parsedDiscount={parsedDiscount}
+              deliveryChargeAmount={parseFloat(deliveryCharge) || 0}
+              customerPhone={customerPhone}
+            />
             <button onClick={MobilePrint} className="popupButton">
               Usb Print
             </button>
