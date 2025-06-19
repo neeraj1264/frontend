@@ -4,7 +4,7 @@ import React from "react";
 export default function RawBTPrintButton({
   productsToSend,
   parsedDiscount,
-  getdeliverycharge,
+  deliveryChargeAmount,
   customerPhone,
 }) {
   // Helper to calculate total price
@@ -12,7 +12,7 @@ export default function RawBTPrintButton({
     items.reduce((sum, p) => sum + p.price * (p.quantity || 1), 0);
 
  const handleRawBTPrint = () => {
-    const hasDeliveryCharge = getdeliverycharge !== 0; // Check if delivery charge exists
+    const hasDeliveryCharge = deliveryChargeAmount !== 0; // Check if delivery charge exists
 
     const orderWidth = 2;
     const nameWidth = 16; // Set a fixed width for product name
@@ -84,7 +84,7 @@ export default function RawBTPrintButton({
       priceWidth,
       " "
     );
-    const delivery = `${getdeliverycharge}`.padStart(priceWidth, " ");
+    const delivery = `${deliveryChargeAmount}`.padStart(priceWidth, " ");
     // Combine header, separator, and product details
     const detailedItems = `\n${dash}\n${header}\n${dash}\n${productDetails}\n${dash}`;
 
@@ -116,7 +116,7 @@ export default function RawBTPrintButton({
   ${hasDeliveryCharge ? `       Service Charge:  ${delivery}` : " "}
   ${parsedDiscount ? `             Discount: -${DiscountAmount}\n${dash}` : " "} 
 \x1B\x21\x30\x1B\x34Total: Rs ${
-      calculateTotalPrice(productsToSend) + getdeliverycharge - parsedDiscount
+      calculateTotalPrice(productsToSend) + deliveryChargeAmount - parsedDiscount
     }/-\x1B\x21\x00\x1B\x35
 
     Thank You Visit Again!

@@ -32,8 +32,8 @@ const CustomerDetail = () => {
   const [productsToSend, setproductsToSend] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [orders, setOrders] = useState([]);
-  const getdeliveryCharge = localStorage.getItem("deliveryCharge");
-  const deliveryChargeAmount = parseFloat(getdeliveryCharge) || 0;
+  // const getdeliveryCharge = localStorage.getItem("deliveryCharge");
+  const deliveryChargeAmount = parseFloat(deliveryCharge) || 0;
   // State to hold all saved customers for auto-fill
   const [savedCustomers, setSavedCustomers] = useState([]);
   // State to hold suggestions based on current phone input
@@ -152,13 +152,14 @@ const CustomerDetail = () => {
       products: productsToSend,
       totalAmount:
         calculateTotalPrice(productsToSend) +
-        deliveryChargeAmount -
+        (parseFloat(deliveryCharge) || 0) -
         parsedDiscount,
       name: customerName,
       phone: customerPhone,
       address: customerAddress,
       timestamp: new Date().toISOString(),
       discount: parsedDiscount, // save discount
+      delivery: parseFloat(deliveryCharge) || 0,
     };
 
     const customerDataObject = {
@@ -318,9 +319,6 @@ const CustomerDetail = () => {
   };
 
 
-  const getdeliverycharge = localStorage.getItem("deliveryCharge")
-    ? parseFloat(localStorage.getItem("deliveryCharge"))
-    : 0; // Default to 0 if not set
   return (
     <div>
       <ToastContainer />
@@ -630,7 +628,7 @@ const CustomerDetail = () => {
           </tbody>
         </table>
         {/* Show this whole section only if there’s a delivery charge or a discount */}
-        {(getdeliverycharge !== 0 || parsedDiscount !== 0) && (
+        {(deliveryChargeAmount !== 0 || parsedDiscount !== 0) && (
           <>
             {/* Item total is always shown whenever any extra applies */}
             <div className="total">
@@ -647,10 +645,10 @@ const CustomerDetail = () => {
             </div>
 
             {/* Service Charge line: only if there is one */}
-            {getdeliverycharge !== 0 && (
+            {deliveryChargeAmount !== 0 && (
               <div className="total">
                 <p style={{ margin: "0" }}>Service Charge:</p>
-                <p style={{ margin: "0" }}>+{getdeliverycharge.toFixed(2)}</p>
+                <p style={{ margin: "0" }}>+{deliveryChargeAmount.toFixed(2)}</p>
               </div>
             )}
 
@@ -670,7 +668,7 @@ const CustomerDetail = () => {
               (sum, product) => sum + product.price * (product.quantity || 1),
               0
             ) +
-            getdeliverycharge -
+            deliveryChargeAmount -
             parsedDiscount
           ).toFixed(2)}
         </p>{" "}
@@ -723,7 +721,7 @@ const CustomerDetail = () => {
               <RawBTPrintButton
         productsToSend={productsToSend}
         parsedDiscount={parsedDiscount}
-        getdeliverycharge={getdeliverycharge}
+        deliveryChargeAmount={parseFloat(deliveryCharge) || 0}
         customerPhone={customerPhone}
       />
             <button onClick={MobilePrint} className="popupButton">

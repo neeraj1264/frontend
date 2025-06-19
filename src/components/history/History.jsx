@@ -232,6 +232,7 @@ const handleRemoveOrder = async (orderId) => {
      <RawBTPrintButton
           productsToSend={order.products}
           customerPhone={order.phone}
+          getdeliverycharge={order.serviceCharge} 
         />
              </p>
    {showRemoveBtn && (
