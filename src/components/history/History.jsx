@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./History.css";
-import { FaPrint  , FaWhatsapp} from "react-icons/fa";
+import { FaPrint, FaWhatsapp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { fetchOrders, removeOrder } from "../../api";
 import Header from "../header/Header";
 import RawBTPrintButton from "../Utils/RawBTPrintButton";
+import WhatsAppButton from "../Utils/WhatsappOrder";
+import { MdDelete } from "react-icons/md";
 
 const History = () => {
   const [orders, setOrders] = useState([]);
@@ -19,82 +21,91 @@ const History = () => {
   const [modalMessage, setModalMessage] = useState(""); // Modal message
 
   // Show remove button on long press
-let pressTimer;
-const handlePressStart = () => {
-  pressTimer = setTimeout(() => {
-    setShowRemoveBtn(true);
-  }, 1000);
-};
-const handlePressEnd = () => {
-  clearTimeout(pressTimer);
-};
+  let pressTimer;
+  const handlePressStart = () => {
+    pressTimer = setTimeout(() => {
+      setShowRemoveBtn(true);
+    }, 1000);
+  };
+  const handlePressEnd = () => {
+    clearTimeout(pressTimer);
+  };
 
 const handleRemoveOrder = async (orderId) => {
   try {
-     // Check if 'advancefeatured' is true in localStorage
-     const advanceFeatured = localStorage.getItem("advancedFeature") === "true";
-    
-     if (advanceFeatured) {
-    // Call the API function
+    const advanceFeatured = localStorage.getItem("advancedFeature") === "true";
+
+    if (!advanceFeatured) {
+      // not enabled → show “feature not granted” message
+      setModalMessage("Advance feature not granted.");
+      setIsModalOpen(true);
+      return;
+    }
+
+    // advanced feature is enabled → ask for confirmation
+    const confirmDelete = window.confirm(
+      "This will permanently delete the order. Are you sure?"
+    );
+    if (!confirmDelete) return; // user cancelled
+
+    // user confirmed → proceed with deletion
     await removeOrder(orderId);
 
-    // Remove the order from the state
-    const updatedOrders = orders.filter((order) => order.id !== orderId);
+    // update local state
+    const updatedOrders = orders.filter((o) => o.id !== orderId);
     setOrders(updatedOrders);
+    setFilteredOrders((prev) => prev.filter((o) => o.id !== orderId));
 
-    setFilteredOrders((prevFilteredOrders) =>
-      prevFilteredOrders.filter((order) => order.id !== orderId)
-    );
-    
-    console.log('Order removed successfully from both MongoDB and state');
-  }else {
-    setModalMessage("Advance feature not granted.");
-    setIsModalOpen(true); // Show the success modal
-  }
- } catch (error) {
-    console.error('Error removing order:', error.message);
+    console.log("Order removed successfully from both MongoDB and state");
+  } catch (error) {
+    console.error("Error removing order:", error.message);
+    // you could also show a toast / modal here
   }
 };
 
- useEffect(() => {
-  const getOrders = async () => {
-    setLoading(true); // Start loading
-    try {
-      const data = await fetchOrders(); // Call the API function
+  useEffect(() => {
+    const getOrders = async () => {
+      setLoading(true); // Start loading
+      try {
+        const data = await fetchOrders(); // Call the API function
 
-      setOrders(data);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Start of today at midnight
+        setOrders(data);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Start of today at midnight
 
-      // Calculate start and end time for the selected day
-      const daysAgo = getDaysAgo(filter);
-      const startOfSelectedDay = new Date(today);
-      startOfSelectedDay.setDate(today.getDate() - daysAgo);
+        // Calculate start and end time for the selected day
+        const daysAgo = getDaysAgo(filter);
+        const startOfSelectedDay = new Date(today);
+        startOfSelectedDay.setDate(today.getDate() - daysAgo);
 
-      const endOfSelectedDay = new Date(startOfSelectedDay);
-      endOfSelectedDay.setHours(23, 59, 59, 999);
+        const endOfSelectedDay = new Date(startOfSelectedDay);
+        endOfSelectedDay.setHours(23, 59, 59, 999);
 
-      // Filter orders for the selected day
-      const dayOrders = data.filter((order) => {
-        const orderDate = new Date(order.timestamp);
-        return orderDate >= startOfSelectedDay && orderDate <= endOfSelectedDay;
-      });
+        // Filter orders for the selected day
+        const dayOrders = data.filter((order) => {
+          const orderDate = new Date(order.timestamp);
+          return (
+            orderDate >= startOfSelectedDay && orderDate <= endOfSelectedDay
+          );
+        });
 
-      setFilteredOrders(dayOrders);
+        setFilteredOrders(dayOrders);
 
-      // Calculate grand total for the day
-      const total = dayOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-      setGrandTotal(total);
-    } catch (error) {
-      console.error('Error fetching orders:', error.message);
-    } finally {
-      setLoading(false); // Stop loading
-    }
-  };
+        // Calculate grand total for the day
+        const total = dayOrders.reduce(
+          (sum, order) => sum + order.totalAmount,
+          0
+        );
+        setGrandTotal(total);
+      } catch (error) {
+        console.error("Error fetching orders:", error.message);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
 
-  getOrders();
-}, [filter]);
-
+    getOrders();
+  }, [filter]);
 
   // Helper to get "days ago" count
   const getDaysAgo = (filterValue) => {
@@ -136,168 +147,235 @@ const handleRemoveOrder = async (orderId) => {
     const customerPhoneNumber = order.phone; // Correct field to access phone number
     const message = `We hope you had a delightful order experience with us. Your feedback is incredibly valuable as we continue to enhance our services. How did you enjoy your meal? We’d love to hear your thoughts.\nTeam: Foodies Hub`;
     // Create the WhatsApp URL to send the message
-    const whatsappUrl = `https://wa.me/+91${customerPhoneNumber}?text=${encodeURIComponent(message)}`;
-  
+    const whatsappUrl = `https://wa.me/+91${customerPhoneNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+
     // Open WhatsApp with the message
     window.open(whatsappUrl, "_blank");
-  };  
-  
+  };
+
   return (
     <div>
-            <Header headerName="Order History"  />
-            <div className="filter-container">
-          <select
-            id="filter"
-            value={filter}
-            onChange={handleFilterChange}
-            style={{ borderRadius: "1rem" }}
-          >
-            <option value="Today">Today</option>
-            <option value="Yesterday">Yesterday</option>
-            {[...Array(6)].map((_, i) => (
-              <option key={i} value={`${i + 2} days ago`}>
-                {i + 2} days ago
-              </option>
-            ))}
-          </select>
-        </div>
-      {loading ? (
-        <div className="lds-ripple"><div></div><div></div></div>
-        ) : (
-      <div className="history-container">
-        <div className="grand-total">
-          <h2 className="total-sale">
-          <select
-  id="filter"
-  value={filter}
-  onChange={handleFilterChange}
-  style={{ borderRadius: "1rem" }}
->
-  <option value="Today">
-    Today ₹
-    {orders
-      .filter(order => new Date(order.timestamp).toLocaleDateString() === new Date().toLocaleDateString())
-      .reduce((sum, order) => sum + order.totalAmount, 0)}
-  </option>
-  <option value="Yesterday">
-    Yesterday ₹
-    {orders
-      .filter(order => {
-        const orderDate = new Date(order.timestamp);
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        return orderDate.toLocaleDateString() === yesterday.toLocaleDateString();
-      })
-      .reduce((sum, order) => sum + order.totalAmount, 0)}
-  </option>
-  {[...Array(6)].map((_, i) => (
-    <option key={i} value={`${i + 2} days ago`}>
-      {i + 2} days ago ₹
-      {orders
-        .filter(order => {
-          const orderDate = new Date(order.timestamp);
-          const filterDate = new Date();
-          filterDate.setDate(filterDate.getDate() - (i + 2));
-          return orderDate.toLocaleDateString() === filterDate.toLocaleDateString();
-        })
-        .reduce((sum, order) => sum + order.totalAmount, 0)}
-    </option>
-  ))}
-</select>
-
-          </h2>
-        </div>
-
-        {filteredOrders.length > 0 ? (
-          [...filteredOrders].reverse().map((order, index) => (
-            <div key={order.id} className="order-section"
-            onMouseDown={handlePressStart}
-            onMouseUp={handlePressEnd}
-            onTouchStart={handlePressStart}
-            onTouchEnd={handlePressEnd}
-            >
-              <hr />
-              <div onClick={() => toggleOrder(order.id)} className="order-lable">
-              <h2
-              >
-                Order {filteredOrders.length - index} -{" "}
-                <span>{formatDate(order.timestamp)}</span>
-              </h2>
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-                <strong>Amount Received: ₹{order.totalAmount}</strong>{" "}
-                {order.phone && (
-    <FaWhatsapp className="whatsapp" onClick={() => handleWhatsappClick(order)} />
-  )}         
-     <RawBTPrintButton
-          productsToSend={order.products}
-          customerPhone={order.phone}
-          deliveryChargeAmount={order.delivery} 
-          parsedDiscount={order.discount}
-          timestamp={order.timestamp}
-            icon={() => (
-    <FaPrint
-      size={24}
-      style={{
-        color: "#1abc9c",
-        marginLeft: "2rem",
-        transition: "transform 0.1s ease",
-      }}
-      onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.2)")}
-      onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-    />
-  )}
-        />
-             </div>
-   {showRemoveBtn && (
-            <button
-              className="remove-btn"
-              onClick={() => handleRemoveOrder(order.id)}
-            >
-              Remove Order
-            </button>
-          )}
-              </div>
-             
-              {expandedOrderId === order.id && ( // Render table only if this order is expanded
-                <table className="products-table">
-                  <thead>
-                    <tr>
-                      <th>Product Name</th>
-                      <th>Price (₹)</th>
-                      <th>Quantity</th>
-                      <th>Total (₹)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.products.map((product, idx) => (
-                      <tr key={idx}>
-                        <td>
-                          {product.size
-                            ? `${product.name} (${product.size})`
-                            : product.name}
-                        </td>
-                        <td>{product.price}</td>
-                        <td>{product.quantity}</td>
-                        <td>{product.price * product.quantity}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          ))
-        ) : (
-          <p>No orders found for {filter.toLowerCase()}.</p>
-        )}
+      <Header headerName="Order History" />
+      <div className="filter-container">
+        <select
+          id="filter"
+          value={filter}
+          onChange={handleFilterChange}
+          style={{ borderRadius: "1rem" }}
+        >
+          <option value="Today">Today</option>
+          <option value="Yesterday">Yesterday</option>
+          {[...Array(6)].map((_, i) => (
+            <option key={i} value={`${i + 2} days ago`}>
+              {i + 2} days ago
+            </option>
+          ))}
+        </select>
       </div>
+      {loading ? (
+        <div className="lds-ripple">
+          <div></div>
+          <div></div>
+        </div>
+      ) : (
+        <div className="history-container">
+          <div className="grand-total">
+            <h2 className="total-sale">
+              <select
+                id="filter"
+                value={filter}
+                onChange={handleFilterChange}
+                style={{ borderRadius: "1rem" }}
+              >
+                <option value="Today">
+                  Today ₹
+                  {orders
+                    .filter(
+                      (order) =>
+                        new Date(order.timestamp).toLocaleDateString() ===
+                        new Date().toLocaleDateString()
+                    )
+                    .reduce((sum, order) => sum + order.totalAmount, 0)}
+                </option>
+                <option value="Yesterday">
+                  Yesterday ₹
+                  {orders
+                    .filter((order) => {
+                      const orderDate = new Date(order.timestamp);
+                      const yesterday = new Date();
+                      yesterday.setDate(yesterday.getDate() - 1);
+                      return (
+                        orderDate.toLocaleDateString() ===
+                        yesterday.toLocaleDateString()
+                      );
+                    })
+                    .reduce((sum, order) => sum + order.totalAmount, 0)}
+                </option>
+                {[...Array(6)].map((_, i) => (
+                  <option key={i} value={`${i + 2} days ago`}>
+                    {i + 2} days ago ₹
+                    {orders
+                      .filter((order) => {
+                        const orderDate = new Date(order.timestamp);
+                        const filterDate = new Date();
+                        filterDate.setDate(filterDate.getDate() - (i + 2));
+                        return (
+                          orderDate.toLocaleDateString() ===
+                          filterDate.toLocaleDateString()
+                        );
+                      })
+                      .reduce((sum, order) => sum + order.totalAmount, 0)}
+                  </option>
+                ))}
+              </select>
+            </h2>
+          </div>
+
+          {filteredOrders.length > 0 ? (
+            [...filteredOrders].reverse().map((order, index) => (
+              <div
+                key={order.id}
+                className="order-section"
+                onMouseDown={handlePressStart}
+                onMouseUp={handlePressEnd}
+                onTouchStart={handlePressStart}
+                onTouchEnd={handlePressEnd}
+              >
+                <hr />
+                <div
+                  onClick={() => toggleOrder(order.id)}
+                  className="order-lable"
+                >
+                  <h2>
+                    Order {filteredOrders.length - index} -{" "}
+                    <span>{formatDate(order.timestamp)}</span>
+                  </h2>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1rem",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <strong>Amount Received: ₹{order.totalAmount}</strong>{" "}
+                    {order.phone && (
+                      <FaWhatsapp
+                        className="whatsapp"
+                        onClick={() => handleWhatsappClick(order)}
+                      />
+                    )}
+                  </div>
+                  {showRemoveBtn && (
+                    <button
+                      className="deletebtn"
+                      onClick={() => handleRemoveOrder(order.id)}
+                    >
+                      <MdDelete />
+                    </button>
+                  )}
+                </div>
+
+                {expandedOrderId === order.id && ( // Render table only if this order is expanded
+                  <table className="products-table">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {order.products.map((product, idx) => (
+                        <tr key={idx}>
+                          <td>
+                            {product.size
+                              ? `${product.name} (${product.size})`
+                              : product.name}
+                          </td>
+                          <td style={{textAlign: "right"}}>{product.price}</td>
+                          <td style={{textAlign: "center"}}>{product.quantity}</td>
+                          <td style={{textAlign: "right"}}>{product.price * product.quantity}</td>
+                        </tr>
+                      ))}
+
+                      {/* DELIVERY ROW */}
+                      {order.delivery > 0 && (
+                        <tr>
+                          <td>
+                            <strong>Delivery Charge</strong>
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td style={{textAlign: "right"}}>
+                            <strong>+{order.delivery}</strong>
+                          </td>
+                        </tr>
+                      )}
+
+                      {/* DISCOUNT ROW */}
+                      {order.discount > 0 && (
+                        <tr>
+                          <td>
+                            <strong>Discount</strong>
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td style={{textAlign: "right"}}>
+                            <strong>-{order.discount}</strong>
+                          </td>
+                        </tr>
+                      )}
+
+                      {/* ICONS ROW */}
+                      <tr>
+                        <td colSpan={4} style={{ textAlign: "center" }}>
+                          <RawBTPrintButton
+                            productsToSend={order.products}
+                            customerPhone={order.phone}
+                            deliveryChargeAmount={order.delivery}
+                            parsedDiscount={order.discount}
+                            timestamp={order.timestamp}
+                            icon={() => (
+                              <FaPrint
+                                size={32}
+                                style={{
+                                  color: "#1abc9c",
+                                  transition: "transform 0.1s ease",
+                                  textAlign: "center"
+                                }}
+                                onMouseEnter={(e) =>
+                                  (e.currentTarget.style.transform =
+                                    "scale(1.2)")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.currentTarget.style.transform = "scale(1)")
+                                }
+                              />
+                            )}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>No orders found for {filter.toLowerCase()}.</p>
+          )}
+        </div>
       )}
-        {/* Custom Modal */}
-        {isModalOpen && (
+      {/* Custom Modal */}
+      {isModalOpen && (
         <div className="custom-modal-overlay">
           <div className="custom-modal-content-history">
             <p className="custom-modal-message-history">{modalMessage}</p>
             <div className="custom-modal-actions">
-            <button
+              <button
                 className="custom-modal-button confirm-button-history"
                 onClick={() => setIsModalOpen(false)}
               >

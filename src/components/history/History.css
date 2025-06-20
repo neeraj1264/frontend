@@ -57,6 +57,7 @@ h2 {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
+  table-layout: fixed;   
 }
 
 .details-table th,
@@ -71,6 +72,7 @@ h2 {
 .products-table th {
   background-color: #f4f4f4;
   font-weight: bold;
+  text-align: center;
 }
 
 .details-table td {
@@ -132,4 +134,25 @@ hr{
 .order-lable h2{
   cursor: pointer;
   font-size: 1rem;
+}
+
+/* give explicit widths to Price, Qty, Total columns */
+.products-table th:nth-child(2),
+.products-table td:nth-child(2) { width: 55px; }  /* Price */
+.products-table th:nth-child(3),
+.products-table td:nth-child(3) { width: 45px; }  /* Qty */
+.products-table th:nth-child(4),
+.products-table td:nth-child(4) { width: 55px; }  /* Total */
+
+.deletebtn {
+  cursor: pointer;
+  color: red;
+  font-size: 2rem;
+  border: none;
+  padding: 0;
+  margin: 0;
+  /* background: white; */
+  /* border: navajowhite; */
+  /* position: absolute; */
+  width: fit-content;
 }
