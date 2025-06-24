@@ -334,31 +334,7 @@ const handleRemoveOrder = async (orderId) => {
                       {/* ICONS ROW */}
                       <tr>
                         <td colSpan={4} style={{ textAlign: "center" }}>
-                          {/* <RawBTPrintButton
-                            productsToSend={order.products}
-                            customerPhone={order.phone}
-                            deliveryChargeAmount={order.delivery}
-                            parsedDiscount={order.discount}
-                            timestamp={order.timestamp}
-                            icon={() => (
-                              <FaPrint
-                                size={32}
-                                style={{
-                                  color: "#1abc9c",
-                                  transition: "transform 0.1s ease",
-                                  textAlign: "center"
-                                }}
-                                onMouseEnter={(e) =>
-                                  (e.currentTarget.style.transform =
-                                    "scale(1.2)")
-                                }
-                                onMouseLeave={(e) =>
-                                  (e.currentTarget.style.transform = "scale(1)")
-                                }
-                              />
-                            )}
-                          /> */}
-                            <Rawbt3Inch
+                          <RawBTPrintButton
                             productsToSend={order.products}
                             customerPhone={order.phone}
                             deliveryChargeAmount={order.delivery}
@@ -382,6 +358,30 @@ const handleRemoveOrder = async (orderId) => {
                               />
                             )}
                           />
+                            {/* <Rawbt3Inch
+                            productsToSend={order.products}
+                            customerPhone={order.phone}
+                            deliveryChargeAmount={order.delivery}
+                            parsedDiscount={order.discount}
+                            timestamp={order.timestamp}
+                            icon={() => (
+                              <FaPrint
+                                size={32}
+                                style={{
+                                  color: "#1abc9c",
+                                  transition: "transform 0.1s ease",
+                                  textAlign: "center"
+                                }}
+                                onMouseEnter={(e) =>
+                                  (e.currentTarget.style.transform =
+                                    "scale(1.2)")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.currentTarget.style.transform = "scale(1)")
+                                }
+                              />
+                            )}
+                          /> */}
                         </td>
                       </tr>
                     </tbody>
