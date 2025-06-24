@@ -7,9 +7,8 @@ const getBaseUrl = () => {
 };
 
 const fetchWithBaseUrl = async (endpoint, options = {}) => {
-  // const BASE_URL = "https://invoice-backend-7czy.vercel.app/api"; 
+  const BASE_URL = getBaseUrl(); 
   // const BASE_URL = "http://localhost:5000/api";
-   const BASE_URL = "https://aus-invoice-backend.vercel.app/api"
   const response = await fetch(`${BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {
