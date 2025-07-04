@@ -6,7 +6,7 @@ import { handleScreenshot } from "../Utils/DownloadPng"; // Import the function
 import "./Customer.css";
 // import { handleScreenshotAsPDF } from "../Utils/DownloadPdf";
 import Header from "../header/Header";
-import { fetchcustomerdata, sendorder, setdata } from "../../api";
+import { fetchcustomerdata, sendorder, setdata } from "../../api"; 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WhatsAppButton from "../Utils/WhatsappOrder";
