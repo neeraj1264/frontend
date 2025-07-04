@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import Invoice from "./components/Invoice/Invoice";
 import "./App.css"; 
-import CustomerDetail from "./components/CustomerDetail/CustomerDetail";
+import CustomerDetail from "./components/CustomerDetail/CustomerDetail"; 
 import NewProduct from "./components/ProductAdded/NewProduct";
 import History from "./components/history/History";
 import { CustomerData } from "./components/data/CustomerData";
