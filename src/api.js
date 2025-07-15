@@ -1,7 +1,7 @@
 const getBaseUrl = () => {
   const geturl = localStorage.getItem("userBaseUrl");
   if (!geturl) {
-    throw new Error("BASE_URL is not available in local storage");
+    throw new Error("BASE_URL is not available in local storage"); 
   }
   return geturl;
 };
