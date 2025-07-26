@@ -13,7 +13,7 @@ const Login = ({ setBaseUrl }) => {
     const user = USERS.find(
       (u) => u.username === username && u.password === password
     );
-
+      console.log("credentials" , user)
     if (user) {
       setModalMessage("Login successful!");
       setIsModalOpen(true); // Show the success modal
@@ -40,7 +40,7 @@ const Login = ({ setBaseUrl }) => {
         <div className="form-group">
           <label>username</label>
          <select value={username} onChange={(e) => setusername(e.target.value)}>
-    {/* <option value="">-- Select Username --</option> */}
+    <option value="">-- Select Username --</option>
     <option value="foodieshub">foodieshub</option>
     <option value="apnapizza">apnapizza</option>
     <option value="chicago">chicago</option>
