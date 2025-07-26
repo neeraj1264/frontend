@@ -6,7 +6,7 @@ import { handleScreenshot } from "../Utils/DownloadPng"; // Import the function
 import "./Customer.css";
 // import { handleScreenshotAsPDF } from "../Utils/DownloadPdf";
 import Header from "../header/Header";
-import { fetchcustomerdata, sendorder, setdata } from "../../api";
+import { fetchcustomerdata, sendorder, setdata, sendInvoiceEmail } from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WhatsAppButton from "../Utils/WhatsappOrder";
@@ -23,6 +23,7 @@ const CustomerDetail = () => {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
 
   const [deliveryCharge, setDeliveryCharge] = useState();
   const [discount, setDiscount] = useState(); // New discount state
@@ -156,6 +157,7 @@ const CustomerDetail = () => {
       name: customerName,
       phone: customerPhone,
       address: customerAddress,
+      email: customerEmail,
       timestamp: new Date().toISOString(),
       discount: parsedDiscount, // save discount
       delivery: parseFloat(deliveryCharge) || 0,
@@ -166,6 +168,7 @@ const CustomerDetail = () => {
       name: customerName,
       phone: customerPhone,
       address: customerAddress,
+      email: customerEmail,
       timestamp: new Date().toISOString(),
     };
 
@@ -191,6 +194,16 @@ console.log("🔶 JSON payload:", JSON.stringify(order));
     } catch (error) {
       console.error("Error sending order:", error.message);
     }
+
+if (customerEmail && customerEmail.trim() !== '') {
+    try {
+      await sendInvoiceEmail(order.id, customerEmail);
+      console.log(`invoice sent to ${customerEmail}`);
+    } catch (err) {
+      console.error("Email send error", err);
+      toast.error("Failed to send email", toastOptions);
+    }
+  } 
 
     try {
       const customerDataResponse = await setdata(customerDataObject);
@@ -411,6 +424,14 @@ console.log("🔶 JSON payload:", JSON.stringify(order));
           onChange={(e) => setCustomerAddress(e.target.value)}
           placeholder="Customer address..."
         />
+      </div>
+       <div className="cust-inputs">
+         <input
+           type="email"
+           value={customerEmail}
+           onChange={(e) => setCustomerEmail(e.target.value)}
+           placeholder="Customer email..."
+         />
       </div>
       <div className="cust-inputs">
         <input

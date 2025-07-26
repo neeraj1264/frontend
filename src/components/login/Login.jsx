@@ -3,7 +3,7 @@ import "./Login.css";
 
 const Login = ({ setBaseUrl }) => {
   const [username, setusername] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("1234");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
   const [modalMessage, setModalMessage] = useState(""); // Modal message
@@ -39,11 +39,17 @@ const Login = ({ setBaseUrl }) => {
       <div className="form">
         <div className="form-group">
           <label>username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setusername(e.target.value)}
-          />
+         <select value={username} onChange={(e) => setusername(e.target.value)}>
+    {/* <option value="">-- Select Username --</option> */}
+    <option value="foodieshub">foodieshub</option>
+    <option value="apnapizza">apnapizza</option>
+    <option value="chicago">chicago</option>
+    <option value="italiapizza">italiapizza</option>
+    <option value="urban">urban</option>
+    <option value="chaman">chaman</option>
+    <option value="australian">australian</option>
+    <option value="chicagokaithal">chicagokaithal</option>
+  </select>
         </div>
         <div className="form-group">
           <label>Password</label>

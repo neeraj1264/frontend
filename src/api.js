@@ -7,7 +7,7 @@ const getBaseUrl = () => {
 };
 
 const fetchWithBaseUrl = async (endpoint, options = {}) => {
-  const BASE_URL = getBaseUrl(); 
+  const BASE_URL = getBaseUrl();
   // const BASE_URL = "http://localhost:5000/api";
   const response = await fetch(`${BASE_URL}${endpoint}`, options);
 
@@ -99,3 +99,10 @@ export const removeOrder = async (orderId) => {
   });
 
 };
+
+export const sendInvoiceEmail = (orderId, customerEmail) =>
+  fetchWithBaseUrl('/invoice/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderId, customerEmail })
+  });

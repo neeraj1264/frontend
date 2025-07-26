@@ -333,16 +333,21 @@ const NewProduct = ({ setSelectedProducts }) => {
           </label>
         </div>
 
-        {isWithVariety && (
-          <div className="varieties-container">
-            <input
-              type="text"
-              placeholder="Size"
-              value={productVariety.size}
-              onChange={(e) =>
-                setProductVariety((prev) => ({ ...prev, size: e.target.value }))
-              }
-            />
+      {isWithVariety && (
+  <div className="varieties-container">
+    <select
+      value={productVariety.size}
+      onChange={(e) =>
+        setProductVariety((prev) => ({ ...prev, size: e.target.value }))
+      }
+    >
+      <option value="">Select Size</option>
+      <option value="Reg">Reg</option>
+      <option value="Med">Med</option>
+      <option value="Large">Large</option>
+      <option value="Ex. Large">Ex. Large</option>
+
+    </select>
             <input
               type="number"
               placeholder="Price (₹)"
@@ -365,17 +370,17 @@ const NewProduct = ({ setSelectedProducts }) => {
             </li>
           ))}
         </ul>
-        <button className="save-button" onClick={handleAddProduct}>
+        {/* <button className="save-button" onClick={handleAddProduct}>
         Add Product
-      </button>
+      </button> */}
       </div>
 
-      <div className="create-invoice-btn"  onClick={()=>{navigate("/invoice")}}>
+      <div className="create-invoice-btn"  onClick={handleAddProduct}>
 
-        <button className="invoice-next-btn">
+        <button className="invoice-next-btn" >
           <h2>
             {" "}
-            CREATE INVOICE
+            Add Product
           </h2>
           {/* <FaArrowRight className="Invoice-arrow" /> */}
         </button>

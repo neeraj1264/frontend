@@ -84,7 +84,7 @@ display: flex;
     border-radius: 1rem;
     padding: .1rem;
 }
-input {
+input , select {
   padding: 0.75rem !important;
   margin: 0.5rem auto !important;
   /* width: 90% !important; */
