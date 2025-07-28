@@ -11,6 +11,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WhatsAppButton from "../Utils/WhatsappOrder";
 import RawBTPrintButton from "../Utils/RawBTPrintButton";
+import SmsOrder from "../Utils/SmsOrder";
 
 const toastOptions = {
   position: "bottom-right",
@@ -734,6 +735,14 @@ if (customerEmail && customerEmail.trim() !== '') {
               productsToSend={productsToSend}
               deliveryChargeAmount={deliveryChargeAmount}
               deliveryCharge={deliveryCharge}
+              parsedDiscount={parsedDiscount}
+              customerPhone={customerPhone}
+              customerAddress={customerAddress}
+              restaurantName={RestorentName}
+            />
+             <SmsOrder
+              productsToSend={productsToSend}
+              deliveryChargeAmount={deliveryChargeAmount}
               parsedDiscount={parsedDiscount}
               customerPhone={customerPhone}
               customerAddress={customerAddress}
