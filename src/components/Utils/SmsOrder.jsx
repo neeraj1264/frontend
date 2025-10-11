@@ -8,7 +8,6 @@ const SmsOrder = ({
   customerAddress = "",
   restaurantName = "",
 }) => {
-  // Build the message body
   const buildBody = () => {
     const lines = [];
     if (restaurantName) lines.push(restaurantName);
@@ -37,15 +36,23 @@ const SmsOrder = ({
     return encodeURIComponent(lines.join("\n"));
   };
 
-  // SMS deep-link URI
-const href = customerPhone ? `sms:${customerPhone}?body=${buildBody()}` : "#";
+  const handleSendSMS = () => {
+    if (!customerPhone) return alert("Customer phone number is missing.");
+    const smsURI = `sms:${customerPhone}?body=${buildBody()}`;
+
+    // Create an invisible anchor to trigger the link
+    const tempLink = document.createElement("a");
+    tempLink.href = smsURI;
+    tempLink.style.display = "none";
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+  };
 
   return (
-    <a href={href}>
-      <button type="button" className="popupButton">
-        SMS
-      </button>
-    </a>
+    <button type="button" className="popupButton" onClick={handleSendSMS}>
+      SMS
+    </button>
   );
 };
 

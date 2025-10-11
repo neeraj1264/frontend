@@ -16,6 +16,7 @@ import { CustomerData } from "./components/data/CustomerData";
 import Advance from "./components/advance/Advance";
 import Login from "./components/login/Login";
 import OrderReport from "./OrderReport";
+import KhataBook from "./components/KhatabookApp/KhatabookApp";
 
 const App = () => {
   const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
@@ -117,6 +118,7 @@ const App = () => {
               <Route path="/history" element={<History />} />
               <Route path="/advance" element={<Advance />} />
               <Route path="/report" element={<OrderReport />} />
+              <Route path="/KhataBook" element={<KhataBook />} />
             </Routes>
           </>
         )}

@@ -8,7 +8,7 @@ const getBaseUrl = () => {
 
 const fetchWithBaseUrl = async (endpoint, options = {}) => {
   const BASE_URL = getBaseUrl();
-  // const BASE_URL = "http://localhost:5000/api";
+  // const BASE_URL = "https://invoice-foodieshub-backend.vercel.app/api";
   const response = await fetch(`${BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {
@@ -106,3 +106,18 @@ export const sendInvoiceEmail = (orderId, customerEmail) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ orderId, customerEmail })
   });
+
+    export const addKhataTransaction = async (customerId, txn) => {
+  return fetchWithBaseUrl(`/customerdata/${customerId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(txn),   // { type: "received", amount: 500 }
+  });
+};
+
+export const deleteKhataTransaction = async (customerId, transactionId) => {
+  return fetchWithBaseUrl(`/customerdata/${customerId}/transactions/${transactionId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+};
