@@ -8,6 +8,7 @@ export default function RawBTPrintButton({
   customerPhone,
  icon: Icon,
   timestamp,
+  balanceAmount,
 }){
 
   // Helper to calculate total price
@@ -16,6 +17,7 @@ export default function RawBTPrintButton({
 
  const handleRawBTPrint = () => {
     const hasDeliveryCharge = deliveryChargeAmount !== 0; // Check if delivery charge exists
+    const hasbalanceAmount = balanceAmount !== 0;
 
     const orderWidth = 2;
     const nameWidth = 16; // Set a fixed width for product name
@@ -117,9 +119,10 @@ export default function RawBTPrintButton({
   ${detailedItems}
   ${hasDeliveryCharge ? `           Item Total:  ${totalprice} ` : " "}
   ${hasDeliveryCharge ? `      Delivery Charge: +${delivery}` : " "}
-  ${parsedDiscount ? `             Discount: -${DiscountAmount}\n${dash}` : " "} 
+  ${parsedDiscount ? `             Discount: -${DiscountAmount}\n` : " "} 
+  ${hasbalanceAmount ? `       Balance Amount: +${balanceAmount}\n${dash}` : " "}
 \x1B\x21\x30\x1B\x34Total: Rs ${
-      calculateTotalPrice(productsToSend) + deliveryChargeAmount - parsedDiscount
+      calculateTotalPrice(productsToSend) + deliveryChargeAmount - parsedDiscount + balanceAmount
     }/-\x1B\x21\x00\x1B\x35
 
     Thank You Visit Again!

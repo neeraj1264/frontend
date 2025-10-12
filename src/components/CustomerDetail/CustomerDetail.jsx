@@ -47,7 +47,18 @@ const CustomerDetail = () => {
   const navigate = useNavigate();
 
   const RestorentName = localStorage.getItem("RestorentName");
+  const [balance, setBalance] = useState("");
 
+    // previous balance (numeric)
+const balanceAmount = parseFloat(balance) || 0;
+const hasBalance = balanceAmount > 0;
+
+    // Consistent number parsing function
+  const parseNumber = (value) => {
+    if (value === null || value === undefined || value === "") return 0;
+    const num = Number(value);
+    return isNaN(num) ? 0 : num;
+  };
   useEffect(() => {
     // Load selected products and total amount from localStorage
     const storedProducts =
@@ -117,6 +128,15 @@ const CustomerDetail = () => {
     setCustomerAddress(customer.address);
     setPhoneSuggestions([]);
     setNameSuggestions([]);
+
+      // auto-fill balance if customer owes you
+  const bal = parseNumber(customer.lifetimeSale) - parseNumber(customer.receivedAmount);
+  if (bal > 0) {
+    setBalance(bal.toFixed(1));
+  } else {
+    setBalance(""); // clear if nothing owed or overpaid
+  }
+
   };
 
   // New handler for clicking on a name suggestion.
@@ -126,6 +146,15 @@ const CustomerDetail = () => {
     setCustomerAddress(customer.address);
     setNameSuggestions([]);
     setPhoneSuggestions([]); // Optionally clear phone suggestions too
+
+      // auto-fill balance if customer owes you
+  const bal = parseNumber(customer.lifetimeSale) - parseNumber(customer.receivedAmount);
+  if (bal > 0) {
+    setBalance(bal.toFixed(1));
+  } else {
+    setBalance(""); // clear if nothing owed or overpaid
+  }
+
   };
 
   const handleBack = () => {
@@ -450,6 +479,14 @@ if (customerEmail && customerEmail.trim() !== '') {
           placeholder="Discount amount..."
         />
       </div>
+        <div className="cust-inputs">
+        <input
+          type="number"
+          value={balance}
+          onChange={(e) => setBalance(e.target.value)}
+          placeholder="Balance amount..."
+        />
+      </div>
       {/* Hidden Invoice Content */}
       <div
         className="invoice-content"
@@ -686,6 +723,14 @@ if (customerEmail && customerEmail.trim() !== '') {
             )}
           </>
         )}
+        
+         {hasBalance && (
+        <div className="total">
+          <p style={{ margin: "0" }}>Balance:</p>
+          <p style={{ margin: "0" }}>+{balanceAmount}</p>
+        </div>
+      )}
+
         <p className="totalAmount">
           Net Total: ₹
           {(
@@ -694,7 +739,8 @@ if (customerEmail && customerEmail.trim() !== '') {
               0
             ) +
             deliveryChargeAmount -
-            parsedDiscount
+            parsedDiscount +
+            balanceAmount
           ).toFixed(2)}
         </p>{" "}
         <div
@@ -739,6 +785,7 @@ if (customerEmail && customerEmail.trim() !== '') {
               customerPhone={customerPhone}
               customerAddress={customerAddress}
               restaurantName={RestorentName}
+              balanceAmount={parseFloat(balance) || 0}
             />
              <SmsOrder
               productsToSend={productsToSend}
@@ -747,6 +794,7 @@ if (customerEmail && customerEmail.trim() !== '') {
               customerPhone={customerPhone}
               customerAddress={customerAddress}
               restaurantName={RestorentName}
+              balanceAmount={parseFloat(balance) || 0}
             />
             <button onClick={handlePngDownload} className="popupButton">
               Download Invoice
@@ -754,6 +802,7 @@ if (customerEmail && customerEmail.trim() !== '') {
             <RawBTPrintButton
               productsToSend={productsToSend}
               parsedDiscount={parsedDiscount}
+              balanceAmount={parseFloat(balance) || 0}
               deliveryChargeAmount={parseFloat(deliveryCharge) || 0}
               customerPhone={customerPhone}
             />

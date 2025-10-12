@@ -7,8 +7,11 @@ const SmsOrder = ({
   customerPhone = "",
   customerAddress = "",
   restaurantName = "",
+  balanceAmount = 0,
 }) => {
   const buildBody = () => {
+          const balance = parseFloat(balanceAmount) || 0;
+  const hasbalanceAmount = balance > 0;
     const lines = [];
     if (restaurantName) lines.push(restaurantName);
     lines.push("Order Details:");
@@ -16,6 +19,9 @@ const SmsOrder = ({
       const qty = p.quantity || 1;
       lines.push(`${p.name} x${qty} = ₹${(p.price * qty).toFixed(2)}`);
     });
+     if (hasbalanceAmount) {
+      lines.push(`Balance: ₹${balance.toFixed(2)}`);
+    }
     if (deliveryChargeAmount) {
       lines.push(`Delivery: ₹${deliveryChargeAmount.toFixed(2)}`);
     }
@@ -28,7 +34,8 @@ const SmsOrder = ({
         0
       ) +
       deliveryChargeAmount -
-      parsedDiscount;
+      parsedDiscount + 
+      hasbalanceAmount;
     lines.push(`Total: ₹${total.toFixed(2)}`);
     if (customerAddress) {
       lines.push(`Address: ${customerAddress}`);

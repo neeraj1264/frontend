@@ -18,18 +18,20 @@ export default function WhatsAppButton({
   customerPhone,
   customerAddress,
   restaurantName,
+  balanceAmount = 0,
 }) {
+
+       // ensure numeric
+  const balance = parseFloat(balanceAmount) || 0;
+  const hasbalanceAmount = balance > 0;
   // Helper to calculate total price of items
   const calculateTotalPrice = (items = []) =>
     items.reduce((sum, p) => sum + p.price * (p.quantity || 1), 0);
 
   const handleSendToWhatsApp = () => {
     // Compute current total
-    const currentTotal =
-      calculateTotalPrice(productsToSend) +
-      deliveryChargeAmount -
-      parsedDiscount;
-
+      const itemsTotal = calculateTotalPrice(productsToSend);
+    const currentTotal = itemsTotal + (parseFloat(deliveryChargeAmount) || 0) - (parseFloat(parsedDiscount) || 0) + (hasbalanceAmount ? balance : 0);
     // Map product details
     const productDetails = productsToSend
       .map((product, i) => {
@@ -48,6 +50,9 @@ export default function WhatsAppButton({
     const discountText = parsedDiscount
       ? `Discount: -₹${parsedDiscount}`
       : "";
+       const BalanceText = hasbalanceAmount
+      ? `Balance: +₹${balance}`
+      : "";
 
     // Order ID
     const orderId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -61,7 +66,8 @@ export default function WhatsAppButton({
         `\nAmount: *₹${currentTotal}*` +
         `\n\n----------item----------\n${productDetails}` +
         (serviceText ? `\n${serviceText}` : "") +
-        (discountText ? `\n${discountText}` : "")
+        (discountText ? `\n${discountText}` : "") + 
+        (BalanceText ? `\n${BalanceText}` : "")
     );
 
     if (!customerPhone) {

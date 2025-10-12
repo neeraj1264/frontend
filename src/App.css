@@ -1,12 +1,13 @@
 :root {
-  --bg: #ED6629;
+  --bg: #ed6629;
+  --gredientBG: linear-gradient(135deg, #ed6629 0%, #d2c2bc 100%);
   --in: #2d3748;
   --out: #1a202c;
   --light: #edf2f7;
 }
 
-body{
-  font-family: 'Poppins', sans-serif;
+body {
+  font-family: "Poppins", sans-serif;
   background-color: #eee;
 }
 
@@ -30,7 +31,7 @@ body{
   text-align: center;
 }
 
-.password-content h3{
+.password-content h3 {
   text-align: center;
 }
 
@@ -57,17 +58,16 @@ body{
 }
 
 --------------------------------loading--------------------------------------
-
-.lds-ripple,
+  .lds-ripple,
 .lds-ripple div {
   box-sizing: border-box;
 }
 .lds-ripple {
-    position: fixed;
-    top: 44%;
-    left: 38%;
-    transform: translate(-50%, -50%);
-    color: var(--bg);
+  position: fixed;
+  top: 44%;
+  left: 38%;
+  transform: translate(-50%, -50%);
+  color: var(--bg);
 }
 .lds-ripple div {
   position: absolute;
@@ -110,8 +110,8 @@ body{
   }
 }
 
-.data-show{
+.data-show {
   text-align: left;
-  margin-left: .5rem;
+  margin-left: 0.5rem;
   font-size: 1rem;
 }
